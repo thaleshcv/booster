@@ -22,7 +22,7 @@ const useStyles = color =>
 
 function VoteAverage({ value }) {
 	let color;
-	if (value <= 3) {
+	if (value <= 4) {
 		color = red['500'];
 	} else if (value <= 7) {
 		color = yellow['500'];

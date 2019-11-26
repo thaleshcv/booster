@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const year = new Date().getFullYear();
-
 // initializing TMDB client
 const client = axios.create({
 	baseURL: process.env.REACT_APP_MOVIEDB_URL,
@@ -23,8 +21,7 @@ export function getMovies(params = {}) {
 	return client.get('/discover/movie', {
 		params: {
 			...params,
-			include_adult: false,
-			year
+			include_adult: false
 		}
 	});
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
@@ -6,10 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import Header from './components/Header';
 import Movie from './components/Movies/Movie';
-import MovieList from './components/Movies/MovieList';
-import MovieListItem from './components/Movies/MovieListItem';
 
-import { getMovies } from './lib/movies';
+import HomePage from './pages/Home';
 
 import './App.css';
 
@@ -24,12 +22,6 @@ const useStyles = makeStyles(theme => ({
 function App() {
 	const classes = useStyles();
 
-	const [movies, setMovies] = useState([]);
-
-	useEffect(() => {
-		getMovies().then(movies => setMovies(movies.results));
-	}, []);
-
 	return (
 		<BrowserRouter>
 			<Header />
@@ -37,11 +29,9 @@ function App() {
 				<Paper className={classes.paper}>
 					<Switch>
 						<Route path='/' exact>
-							<MovieList>
-								{movies.map(m => (
-									<MovieListItem key={m.id} movie={m} />
-								))}
-							</MovieList>
+							{({ history, location }) => (
+								<HomePage history={history} location={location} />
+							)}
 						</Route>
 						<Route path='/movies/:movieId'>
 							{({ match }) => <Movie movieId={match.params.movieId} />}

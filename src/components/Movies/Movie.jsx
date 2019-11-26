@@ -31,7 +31,10 @@ const useStyles = makeStyles(theme => ({
 	},
 	progress: {
 		minHeight: 400,
-		height: '100%'
+		height: '100%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 }));
 
