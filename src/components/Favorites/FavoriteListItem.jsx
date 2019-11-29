@@ -7,7 +7,10 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DoneIcon from '@material-ui/icons/Done';
+import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
+
 import { makeStyles } from '@material-ui/core/styles';
 
 import { getPosterUrl } from '../../lib/tmdb';
@@ -39,25 +42,38 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function MovieListItem({ movie }) {
+function FavoriteListItem({
+	id,
+	title,
+	posterPath,
+	backdropPath,
+	movieId,
+	onDelete,
+	onWatched
+}) {
 	const classes = useStyles();
 
 	return (
 		<Card className={classes.card}>
 			<CardMedia
 				className={classes.media}
-				title={movie.title}
-				image={getPosterUrl(movie.poster_path, 185)}
+				title={title}
+				image={getPosterUrl(posterPath, 185)}
 			/>
 			<CardContent className={classes.content}>
-				<Link component={RouterLink} to={`/movies/${movie.id}/${movie.title}`}>
+				<Link component={RouterLink} to={`/movies/${movieId}/${title}`}>
 					<Typography className={classes.title} variant='body1'>
-						{movie.title}
+						{title}
 					</Typography>
 				</Link>
 				<CardActions className={classes.controls}>
-					<IconButton>
-						<FavoriteBorderIcon />
+					<IconButton
+						title='Remove from favorites'
+						onClick={() => onDelete(id)}>
+						<DeleteIcon />
+					</IconButton>
+					<IconButton title='Mark as watched' onClick={() => onWatched(id)}>
+						<DoneOutlineIcon />
 					</IconButton>
 				</CardActions>
 			</CardContent>
@@ -65,4 +81,4 @@ function MovieListItem({ movie }) {
 	);
 }
 
-export default MovieListItem;
+export default FavoriteListItem;

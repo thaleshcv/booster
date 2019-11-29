@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 const fbConfig = {
-	apiKey: process.env.REACT_APP_API_KEY,
+	apiKey: process.env.REACT_APP_FB_API_KEY,
 	authDomain: process.env.REACT_APP_FB_AUTH_DOMAIN,
 	databaseURL: process.env.REACT_APP_FB_DATABASE_URL,
 	projectId: process.env.REACT_APP_FB_PROJECT_ID,
@@ -19,7 +20,18 @@ if (firebase.apps.length === 0) {
 	firebase.initializeApp(fbConfig);
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+function renderApp(user) {
+	ReactDOM.render(<App currentUser={user} />, document.getElementById('root'));
+}
+
+firebase.auth().onAuthStateChanged(function(user) {
+	console.log('onAuthStateChanged');
+	const newUser = user ? user.toJSON() : null;
+
+	renderApp(newUser);
+});
+
+renderApp();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

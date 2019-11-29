@@ -1,6 +1,5 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -19,8 +18,9 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Header() {
+function Header({ children }) {
 	const classes = useStyles();
+
 	return (
 		<div className={classes.topbar}>
 			<AppBar position='static'>
@@ -33,9 +33,9 @@ function Header() {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant='h6' className={classes.brand}>
-						News
+						BOOSTER
 					</Typography>
-					<Button color='inherit'>Login</Button>
+					{children}
 				</Toolbar>
 			</AppBar>
 		</div>

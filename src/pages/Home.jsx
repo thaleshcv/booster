@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import MovieList from '../components/Movies/MovieList';
 import MovieListItem from '../components/Movies/MovieListItem';
 import Pagination from '../components/Pagination';
 
-import { getMovies } from '../lib/movies';
+import { getMovies } from '../lib/tmdb';
 
-function Home({ history, location }) {
+function Home() {
+	const history = useHistory();
+	const { location } = history;
+
 	const [movies, setMovies] = useState({
 		results: [],
 		page: 0,

@@ -1,12 +1,18 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import Chip from '@material-ui/core/Chip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import VoteAverage from './VoteAverage';
-import { getPosterUrl, getMovie } from '../../lib/movies';
+import MovieGenres from '../components/Movies/MovieGenres';
+import VoteAverage from '../components/Movies/VoteAverage';
+import { getPosterUrl, getMovie } from '../lib/tmdb';
+import { createFavorite, deleteFavorite } from '../lib/favorites';
+
+import { actions } from '../reducer';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -35,10 +41,13 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center'
+	},
+	favoriteIcon: {
+		fontSize: '1.5em'
 	}
 }));
 
-function Movie({ movieId }) {
+function Movie({ dispatch, movieId, favoriteId }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
@@ -59,6 +68,24 @@ function Movie({ movieId }) {
 			});
 	}, [movieId]);
 
+	const handleFavorite = () => {
+		if (favoriteId) {
+			deleteFavorite(favoriteId).then(() => {
+				dispatch({
+					type: actions.REMOVE_FAVORITE,
+					payload: favoriteId
+				});
+			});
+		} else {
+			createFavorite(movie).then(favorite => {
+				dispatch({
+					type: actions.ADD_FAVORITES,
+					payload: favorite
+				});
+			});
+		}
+	};
+
 	if (loading) {
 		return (
 			<div className={classes.progress}>
@@ -70,6 +97,8 @@ function Movie({ movieId }) {
 	if (!movie) {
 		return null;
 	}
+
+	const FavIcon = favoriteId ? FavoriteIcon : FavoriteBorderIcon;
 
 	return (
 		<Fragment>
@@ -89,13 +118,21 @@ function Movie({ movieId }) {
 						<VoteAverage value={movie.vote_average} />
 					</Typography>
 
-					<div className={classes.genres}>
-						<span>
-							{movie.genres.map(g => (
-								<Chip key={g.id} label={g.name} />
-							))}
-						</span>
-					</div>
+					<Grid
+						alignItems='center'
+						className={classes.genres}
+						spacing={1}
+						container>
+						<Grid style={{ flex: 1 }} item>
+							<MovieGenres genres={movie.genres} />
+						</Grid>
+
+						<Grid item>
+							<IconButton onClick={handleFavorite}>
+								<FavIcon className={classes.favoriteIcon} />
+							</IconButton>
+						</Grid>
+					</Grid>
 
 					<Typography variant='body1' color='textSecondary' paragraph>
 						{movie.tagline}
@@ -105,13 +142,19 @@ function Movie({ movieId }) {
 					</Typography>
 
 					<Grid container>
-						<Grid xs={12} md={6} item>
+						<Grid xs={12} md={4} item>
+							<Typography color='textSecondary' variant='body2'>
+								Released: {movie.release_date}
+							</Typography>
+						</Grid>
+
+						<Grid xs={12} md={4} item>
 							<Typography color='textSecondary' variant='body2'>
 								From: {movie.production_countries.map(c => c.name)}
 							</Typography>
 						</Grid>
-						<Grid xs={12} md={6} item>
-							<Typography align='right' color='textSecondary' variant='body2'>
+						<Grid xs={12} md={4} item>
+							<Typography color='textSecondary' variant='body2'>
 								Runtime: {movie.runtime} minutes
 							</Typography>
 						</Grid>
