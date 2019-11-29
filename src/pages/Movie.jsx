@@ -7,6 +7,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Flash from '../components/Flash';
 import MovieGenres from '../components/Movies/MovieGenres';
 import VoteAverage from '../components/Movies/VoteAverage';
 import { getPosterUrl, getMovie } from '../lib/tmdb';
@@ -52,6 +53,7 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	const [movie, setMovie] = useState();
 	const [loading, setLoading] = useState(false);
+	const [message, setMessage] = useState();
 
 	useEffect(() => {
 		setLoading(true);
@@ -70,20 +72,32 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	const handleFavorite = () => {
 		if (favoriteId) {
-			deleteFavorite(favoriteId).then(() => {
-				dispatch({
-					type: actions.REMOVE_FAVORITE,
-					payload: favoriteId
+			deleteFavorite(favoriteId)
+				.then(() => {
+					dispatch({
+						type: actions.REMOVE_FAVORITE,
+						payload: favoriteId
+					});
+				})
+				.then(() => {
+					setMessage('Movie removed from favorites');
 				});
-			});
 		} else {
-			createFavorite(movie).then(favorite => {
-				dispatch({
-					type: actions.ADD_FAVORITES,
-					payload: favorite
+			createFavorite(movie)
+				.then(favorite => {
+					dispatch({
+						type: actions.ADD_FAVORITES,
+						payload: favorite
+					});
+				})
+				.then(() => {
+					setMessage('Movie added to favorites');
 				});
-			});
 		}
+	};
+
+	const handleCloseFlash = () => {
+		setMessage(null);
 	};
 
 	if (loading) {
@@ -102,6 +116,9 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	return (
 		<Fragment>
+			<Flash open={!!message} onClose={handleCloseFlash}>
+				{message}
+			</Flash>
 			<div className={classes.root}>
 				<img
 					className={classes.poster}
@@ -117,7 +134,6 @@ function Movie({ dispatch, movieId, favoriteId }) {
 						{movie.title}
 						<VoteAverage value={movie.vote_average} />
 					</Typography>
-
 					<Grid
 						alignItems='center'
 						className={classes.genres}
@@ -126,7 +142,6 @@ function Movie({ dispatch, movieId, favoriteId }) {
 						<Grid style={{ flex: 1 }} item>
 							<MovieGenres genres={movie.genres} />
 						</Grid>
-
 						<Grid item>
 							<IconButton onClick={handleFavorite}>
 								<FavIcon className={classes.favoriteIcon} />
@@ -147,7 +162,6 @@ function Movie({ dispatch, movieId, favoriteId }) {
 								Released: {movie.release_date}
 							</Typography>
 						</Grid>
-
 						<Grid xs={12} md={4} item>
 							<Typography color='textSecondary' variant='body2'>
 								From: {movie.production_countries.map(c => c.name)}
