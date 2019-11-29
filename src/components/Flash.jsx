@@ -23,7 +23,6 @@ function Flash({ children, open, onClose, className, style }) {
 				horizontal: 'right'
 			}}
 			open={open}
-			autoHideDuration={6000}
 			onClose={onClose}
 			ContentProps={{
 				'aria-describedby': 'flash-content-id'

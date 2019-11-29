@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Flash from './components/Flash';
 import Header from './components/Header';
 import UserAvatar from './components/UserAvatar';
 import HomePage from './pages/Home';
@@ -37,7 +38,8 @@ function App({ currentUser }) {
 	const classes = useStyles();
 
 	const [state, dispatch] = useReducer(reducer, {
-		favorites: []
+		favorites: [],
+		flashes: []
 	});
 
 	useEffect(() => {
@@ -50,6 +52,12 @@ function App({ currentUser }) {
 			});
 		}
 	}, [currentUser]);
+
+	const handleFlashClose = () => {
+		dispatch({
+			type: actions.SHIFT_FLASH_MESSAGE
+		});
+	};
 
 	console.log('App State', state);
 
@@ -71,6 +79,9 @@ function App({ currentUser }) {
 				)}
 			</Header>
 			<Container className={classes.root} maxWidth='lg'>
+				<Flash open={state.flashes.length > 0} onClose={handleFlashClose}>
+					{state.flashes[0]}
+				</Flash>
 				<Paper className={classes.paper}>
 					<Switch>
 						<Route path='/' exact>

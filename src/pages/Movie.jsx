@@ -7,7 +7,6 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import Flash from '../components/Flash';
 import MovieGenres from '../components/Movies/MovieGenres';
 import VoteAverage from '../components/Movies/VoteAverage';
 import { getPosterUrl, getMovie } from '../lib/tmdb';
@@ -53,7 +52,6 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	const [movie, setMovie] = useState();
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState();
 
 	useEffect(() => {
 		setLoading(true);
@@ -72,32 +70,32 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	const handleFavorite = () => {
 		if (favoriteId) {
-			deleteFavorite(favoriteId)
-				.then(() => {
-					dispatch({
+			deleteFavorite(favoriteId).then(() => {
+				dispatch([
+					{
 						type: actions.REMOVE_FAVORITE,
 						payload: favoriteId
-					});
-				})
-				.then(() => {
-					setMessage('Movie removed from favorites');
-				});
+					},
+					{
+						type: actions.ADD_FLASH_MESSAGE,
+						payload: 'Movie removed from favorites'
+					}
+				]);
+			});
 		} else {
-			createFavorite(movie)
-				.then(favorite => {
-					dispatch({
+			createFavorite(movie).then(favorite => {
+				dispatch([
+					{
 						type: actions.ADD_FAVORITES,
 						payload: favorite
-					});
-				})
-				.then(() => {
-					setMessage('Movie added to favorites');
-				});
+					},
+					{
+						type: actions.ADD_FLASH_MESSAGE,
+						payload: 'Movie added to favorites'
+					}
+				]);
+			});
 		}
-	};
-
-	const handleCloseFlash = () => {
-		setMessage(null);
 	};
 
 	if (loading) {
@@ -116,9 +114,6 @@ function Movie({ dispatch, movieId, favoriteId }) {
 
 	return (
 		<Fragment>
-			<Flash open={!!message} onClose={handleCloseFlash}>
-				{message}
-			</Flash>
 			<div className={classes.root}>
 				<img
 					className={classes.poster}
