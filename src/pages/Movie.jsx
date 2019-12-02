@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Movie({ dispatch, movieId, favoriteId }) {
+function Movie({ currentUser, dispatch, movieId, favoriteId }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
@@ -69,6 +69,15 @@ function Movie({ dispatch, movieId, favoriteId }) {
 	}, [movieId]);
 
 	const handleFavorite = () => {
+		if (!currentUser) {
+			dispatch({
+				type: actions.ADD_FLASH_MESSAGE,
+				payload: 'You have to log in first'
+			});
+
+			return;
+		}
+
 		if (favoriteId) {
 			deleteFavorite(favoriteId).then(() => {
 				dispatch([

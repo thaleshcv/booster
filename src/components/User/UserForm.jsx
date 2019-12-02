@@ -12,6 +12,27 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
+const validate = ({ email, password, passwordConfirmation }) => {
+	const errors = {};
+	if (!email) {
+		errors['email'] = 'Email is required';
+	}
+
+	if (!password) {
+		errors['password'] = 'Password is required';
+	}
+
+	if (!passwordConfirmation) {
+		errors['passwordConfirmation'] = 'Password confirmation is required';
+	}
+
+	if (password !== passwordConfirmation) {
+		errors['passwordConfirmation'] =
+			'Confirmation does not match the password entered';
+	}
+	return errors;
+};
+
 function UserForm({ onSubmit }) {
 	const classes = useStyles();
 
@@ -21,8 +42,17 @@ function UserForm({ onSubmit }) {
 		passwordConfirmation: ''
 	});
 
+	const [errors, setErrors] = useState({});
+
 	const handleSubmit = evt => {
 		evt.preventDefault();
+
+		const formErrors = validate(values);
+		if (Object.entries(formErrors).length > 0) {
+			setErrors(formErrors);
+			return;
+		}
+
 		onSubmit(values);
 	};
 
@@ -45,6 +75,8 @@ function UserForm({ onSubmit }) {
 				value={values.email}
 				label='Email'
 				onChange={handleChange}
+				helperText={errors.email}
+				error={Boolean(errors.email)}
 				autoFocus
 				fullWidth
 			/>
@@ -56,6 +88,8 @@ function UserForm({ onSubmit }) {
 				value={values.password}
 				label='Password'
 				onChange={handleChange}
+				helperText={errors.password}
+				error={Boolean(errors.password)}
 				fullWidth
 			/>
 			<TextField
@@ -66,6 +100,8 @@ function UserForm({ onSubmit }) {
 				value={values.passwordConfirmation}
 				label='Confirm your password'
 				onChange={handleChange}
+				helperText={errors.passwordConfirmation}
+				error={Boolean(errors.passwordConfirmation)}
 				fullWidth
 			/>
 			<Button type='submit' color='primary' variant='contained'>

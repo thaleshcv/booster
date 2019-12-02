@@ -1,4 +1,5 @@
 export const actions = {
+	RESET_DATA: 'RESET_DATA',
 	ADD_FAVORITES: 'ADD_FAVORITES',
 	REMOVE_FAVORITE: 'REMOVE_FAVORITE',
 	ADD_FLASH_MESSAGE: 'ADD_FLASH_MESSAGE',
@@ -7,6 +8,13 @@ export const actions = {
 
 function reducer(state, action) {
 	switch (action.type) {
+		case actions.RESET_DATA: {
+			return {
+				...state,
+				favorites: [],
+				flashes: []
+			};
+		}
 		case actions.ADD_FAVORITES: {
 			return {
 				...state,

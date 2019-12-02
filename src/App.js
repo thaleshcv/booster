@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, Fragment } from 'react';
 import {
 	BrowserRouter,
 	Link as RouterLink,
@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
+import ProtectedRoute from './components/ProtectedRoute';
 import Flash from './components/Flash';
 import Header from './components/Header';
 import UserAvatar from './components/UserAvatar';
@@ -59,6 +60,14 @@ function App({ currentUser }) {
 		});
 	};
 
+	const handleLogout = () => {
+		logoutUser().then(() => {
+			dispatch({
+				type: actions.RESET_DATA
+			});
+		});
+	};
+
 	console.log('App State', state);
 
 	return (
@@ -67,11 +76,13 @@ function App({ currentUser }) {
 				<Button component={RouterLink} to='/' color='inherit'>
 					Home
 				</Button>
-				<Button component={RouterLink} to='/favorites' color='inherit'>
-					Favorites
-				</Button>
 				{currentUser ? (
-					<UserAvatar user={currentUser} onLogout={() => logoutUser()} />
+					<Fragment>
+						<Button component={RouterLink} to='/favorites' color='inherit'>
+							Favorites
+						</Button>
+						<UserAvatar user={currentUser} onLogout={handleLogout} />
+					</Fragment>
 				) : (
 					<Button component={RouterLink} to='/login' color='inherit'>
 						Login
@@ -87,23 +98,32 @@ function App({ currentUser }) {
 						<Route path='/' exact>
 							<HomePage />
 						</Route>
-						<Route path='/favorites'>
+						<ProtectedRoute
+							path='/favorites'
+							redirect={<Redirect to='/login' />}
+							authorized={Boolean(currentUser)}>
 							<FavoritesPage dispatch={dispatch} favorites={state.favorites} />
-						</Route>
-						<Route path='/login'>
-							{() => (currentUser ? <Redirect to='/' /> : <LoginPage />)}
-						</Route>
-						<Route path='/register'>
-							{() => (currentUser ? <Redirect to='/' /> : <RegisterPage />)}
-						</Route>
+						</ProtectedRoute>
+						<ProtectedRoute
+							path='/login'
+							redirect={<Redirect to='/' />}
+							authorized={!currentUser}>
+							<LoginPage />
+						</ProtectedRoute>
+						<ProtectedRoute
+							path='/register'
+							redirect={<Redirect to='/' />}
+							authorized={!currentUser}>
+							<RegisterPage />
+						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
 							{({ match }) => {
 								const favorite = state.favorites.find(
-									fav => String(fav.movieId) === String(match.params.movieId)
+									fav => String(fav.movieId) === match.params.movieId
 								);
-
 								return (
 									<MoviePage
+										currentUser={currentUser}
 										movieId={match.params.movieId}
 										favoriteId={favorite ? favorite.id : null}
 										dispatch={dispatch}
