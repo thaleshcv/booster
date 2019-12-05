@@ -90,12 +90,25 @@ function App({ currentUser }) {
 		}, 500);
 	};
 
+	const handleSearchClear = () => {
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+
+		history.push({
+			pathname: '/discover'
+		});
+	};
+
 	console.log('App State', state);
 
 	return (
 		<Fragment>
 			<Header className={classes.header}>
-				<SearchInput onChange={handleSearchChange} />
+				<SearchInput
+					onChange={handleSearchChange}
+					onClear={handleSearchClear}
+				/>
 				<div>
 					<Button component={RouterLink} to='/' color='inherit'>
 						Home
