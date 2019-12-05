@@ -3,7 +3,9 @@ import Input from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
-	wrapper: {
+	root: {
+		backgroundColor: 'rgba(255,255,255,0.2)',
+		padding: theme.spacing(1, 2),
 		'&:before': {
 			borderBottom: '1px solid rgba(255,255,255,0.3) !important'
 		},
@@ -16,16 +18,16 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function SearchInput(props) {
+function SearchInput({ className, inputProps, ...props }) {
 	const classes = useStyles();
 
 	return (
 		<Input
 			id='search-input'
 			placeholder='Search movies here...'
-			className={classes.wrapper}
+			className={[classes.root, className].join(' ')}
 			inputProps={{
-				className: classes.input
+				className: [classes.input, inputProps].join(' ')
 			}}
 			{...props}
 		/>
