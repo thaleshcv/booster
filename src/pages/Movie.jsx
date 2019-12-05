@@ -168,7 +168,7 @@ function Movie({ currentUser, dispatch, movieId, favoriteId }) {
 						</Grid>
 						<Grid xs={12} md={4} item>
 							<Typography color='textSecondary' variant='body2'>
-								From: {movie.production_countries.map(c => c.name)}
+								From: {movie.production_countries.map(c => c.name).join(', ')}
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>

@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-
+import { BrowserRouter } from 'react-router-dom';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+
+import App from './App';
+import * as serviceWorker from './serviceWorker';
 
 const fbConfig = {
 	apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -21,7 +22,12 @@ if (firebase.apps.length === 0) {
 }
 
 function renderApp(user) {
-	ReactDOM.render(<App currentUser={user} />, document.getElementById('root'));
+	ReactDOM.render(
+		<BrowserRouter>
+			<App currentUser={user} />
+		</BrowserRouter>,
+		document.getElementById('root')
+	);
 }
 
 firebase.auth().onAuthStateChanged(function(user) {

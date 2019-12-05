@@ -4,10 +4,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { getPosterUrl } from '../../lib/tmdb';
@@ -55,11 +53,7 @@ function MovieListItem({ movie }) {
 						{movie.title}
 					</Typography>
 				</Link>
-				<CardActions className={classes.controls}>
-					<IconButton>
-						<FavoriteBorderIcon />
-					</IconButton>
-				</CardActions>
+				<CardActions className={classes.controls}></CardActions>
 			</CardContent>
 		</Card>
 	);

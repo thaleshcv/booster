@@ -27,6 +27,20 @@ export function getMovies(params = {}) {
 }
 
 /**
+ * Search for movies.
+ *
+ * @param {Object} params
+ */
+export function searchMovies(params = {}) {
+	return client.get('/search/movie', {
+		params: {
+			...params,
+			include_adult: false
+		}
+	});
+}
+
+/**
  * Get the primary information about a movie.
  *
  * @param {String} movieId

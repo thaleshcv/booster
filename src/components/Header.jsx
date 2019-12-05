@@ -12,27 +12,24 @@ const useStyles = makeStyles(theme => ({
 	},
 	menuButton: {
 		marginRight: theme.spacing(2)
-	},
-	brand: {
-		flexGrow: 1
 	}
 }));
 
-function Header({ children }) {
+function Header({ children, className, style }) {
 	const classes = useStyles();
 
 	return (
 		<div className={classes.topbar}>
 			<AppBar position='static'>
-				<Toolbar>
-					<IconButton
-						edge='start'
-						className={classes.menuButton}
-						color='inherit'
-						aria-label='menu'>
-						<MenuIcon />
-					</IconButton>
+				<Toolbar style={style} className={className}>
 					<Typography variant='h6' className={classes.brand}>
+						<IconButton
+							edge='start'
+							className={classes.menuButton}
+							color='inherit'
+							aria-label='menu'>
+							<MenuIcon />
+						</IconButton>
 						BOOSTER
 					</Typography>
 					{children}

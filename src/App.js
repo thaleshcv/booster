@@ -1,20 +1,22 @@
 import React, { useReducer, useEffect, Fragment } from 'react';
 import {
-	BrowserRouter,
 	Link as RouterLink,
 	Redirect,
 	Route,
-	Switch
+	Switch,
+	useHistory
 } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
+import SearchInput from './components/SearchInput';
 import ProtectedRoute from './components/ProtectedRoute';
 import Flash from './components/Flash';
 import Header from './components/Header';
 import UserAvatar from './components/UserAvatar';
+import DiscoverPage from './pages/Discover';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import MoviePage from './pages/Movie';
@@ -32,11 +34,18 @@ const useStyles = makeStyles(theme => ({
 		height: '100%',
 		boxSizing: 'border-box',
 		padding: theme.spacing(1, 0)
+	},
+	header: {
+		display: 'flex',
+		justifyContent: 'space-between'
 	}
 }));
 
 function App({ currentUser }) {
+	let timeoutId;
+
 	const classes = useStyles();
+	const history = useHistory();
 
 	const [state, dispatch] = useReducer(reducer, {
 		favorites: [],
@@ -68,35 +77,57 @@ function App({ currentUser }) {
 		});
 	};
 
+	const handleSearchChange = ({ target }) => {
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+
+		timeoutId = setTimeout(function() {
+			history.push({
+				pathname: '/discover',
+				search: `query=${target.value}`
+			});
+		}, 500);
+	};
+
 	console.log('App State', state);
 
 	return (
-		<BrowserRouter>
-			<Header>
-				<Button component={RouterLink} to='/' color='inherit'>
-					Home
-				</Button>
-				{currentUser ? (
-					<Fragment>
-						<Button component={RouterLink} to='/favorites' color='inherit'>
-							Favorites
-						</Button>
-						<UserAvatar user={currentUser} onLogout={handleLogout} />
-					</Fragment>
-				) : (
-					<Button component={RouterLink} to='/login' color='inherit'>
-						Login
+		<Fragment>
+			<Header className={classes.header}>
+				<SearchInput onChange={handleSearchChange} />
+				<div>
+					<Button component={RouterLink} to='/' color='inherit'>
+						Home
 					</Button>
-				)}
+					<Button component={RouterLink} to='/discover' color='inherit'>
+						Discover
+					</Button>
+					{currentUser ? (
+						<Fragment>
+							<Button component={RouterLink} to='/favorites' color='inherit'>
+								Favorites
+							</Button>
+							<UserAvatar user={currentUser} onLogout={handleLogout} />
+						</Fragment>
+					) : (
+						<Button component={RouterLink} to='/login' color='inherit'>
+							Login
+						</Button>
+					)}
+				</div>
 			</Header>
 			<Container className={classes.root} maxWidth='lg'>
 				<Flash open={state.flashes.length > 0} onClose={handleFlashClose}>
 					{state.flashes[0]}
 				</Flash>
-				<Paper className={classes.paper}>
+				<Paper>
 					<Switch>
 						<Route path='/' exact>
 							<HomePage />
+						</Route>
+						<Route path='/discover' exact>
+							<DiscoverPage />
 						</Route>
 						<ProtectedRoute
 							path='/favorites'
@@ -134,7 +165,7 @@ function App({ currentUser }) {
 					</Switch>
 				</Paper>
 			</Container>
-		</BrowserRouter>
+		</Fragment>
 	);
 }
 
