@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
@@ -14,7 +15,6 @@ function UserAvatar({ user, onLogout }) {
 
 	const closeMenu = () => {
 		setAnchorEl(null);
-		onLogout();
 	};
 
 	return (
@@ -28,6 +28,9 @@ function UserAvatar({ user, onLogout }) {
 				open={open}
 				onClose={closeMenu}
 				keepMounted>
+				<MenuItem component={RouterLink} to='/account'>
+					Account
+				</MenuItem>
 				<MenuItem onClick={closeMenu}>Logout</MenuItem>
 			</Menu>
 		</span>

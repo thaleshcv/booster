@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Flash from './components/Flash';
 import Header from './components/Header';
 import UserAvatar from './components/UserAvatar';
+import AccountPage from './pages/Account';
 import DiscoverPage from './pages/Discover';
 import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
@@ -113,7 +114,7 @@ function App({ currentUser }) {
 						<Route path='/' exact>
 							<HomePage />
 						</Route>
-						<Route path='/discover' exact>
+						<Route path='/discover'>
 							<DiscoverPage />
 						</Route>
 						<ProtectedRoute
@@ -123,14 +124,20 @@ function App({ currentUser }) {
 							<FavoritesPage dispatch={dispatch} favorites={state.favorites} />
 						</ProtectedRoute>
 						<ProtectedRoute
+							path='/account'
+							redirect={<Redirect to='/login' />}
+							authorized={Boolean(currentUser)}>
+							<AccountPage dispatch={dispatch} currentUser={currentUser} />
+						</ProtectedRoute>
+						<ProtectedRoute
 							path='/login'
-							redirect={<Redirect to='/' />}
+							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
 							<LoginPage />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/register'
-							redirect={<Redirect to='/' />}
+							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
 							<RegisterPage />
 						</ProtectedRoute>
