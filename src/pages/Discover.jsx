@@ -1,8 +1,10 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
+import SearchInput from '../components/SearchInput';
 import MovieList from '../components/Movies/MovieList';
 import MovieListItem from '../components/Movies/MovieListItem';
 import Pagination from '../components/Pagination';
@@ -14,6 +16,8 @@ function fetchMovies(query, page) {
 }
 
 function Discover() {
+	let timeoutId;
+
 	const history = useHistory();
 	const { location } = history;
 
@@ -41,11 +45,44 @@ function Discover() {
 		});
 	};
 
+	const handleSearchChange = ({ target }) => {
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+
+		timeoutId = setTimeout(function() {
+			history.push({
+				pathname: '/discover',
+				search: `query=${target.value}`
+			});
+		}, 500);
+	};
+
+	const handleSearchClear = () => {
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+
+		history.push({
+			pathname: '/discover'
+		});
+	};
+
 	return (
 		<Container>
-			<Typography variant='h2' gutterBottom>
-				Discover movies
-			</Typography>
+			<Grid justify='space-between' alignItems='center' container>
+				<Grid item>
+					<Typography variant='h2' gutterBottom>
+						Discover movies
+					</Typography>
+				</Grid>
+				<Grid item>
+					<SearchInput
+						onChange={handleSearchChange}
+						onClear={handleSearchClear}
+					/>
+				</Grid>
+			</Grid>
 			{movies.results.length === 0 ? (
 				<Typography variant='body1' align='center'>
 					No movies to show
