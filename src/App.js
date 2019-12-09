@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ProtectedRoute from './components/ProtectedRoute';
 import Flash from './components/Flash';
 import Header from './components/Header';
-import UserAvatar from './components/UserAvatar';
+import UserMenu from './components/UserMenu';
 import AccountPage from './pages/Account';
 import DiscoverPage from './pages/Discover';
 import HomePage from './pages/Home';
@@ -96,7 +96,7 @@ function App({ currentUser }) {
 							<Button component={RouterLink} to='/favorites' color='inherit'>
 								Favorites
 							</Button>
-							<UserAvatar user={currentUser} onLogout={handleLogout} />
+							<UserMenu user={currentUser} onLogout={handleLogout} />
 						</Fragment>
 					) : (
 						<Button component={RouterLink} to='/login' color='inherit'>

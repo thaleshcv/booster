@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -6,6 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
+import UserAvatar from '../components/User/UserAvatar';
+import { deleteUser, updateProfile } from '../lib/user';
 import { actions } from '../reducer';
 
 const useStyles = makeStyles(theme => ({
@@ -23,10 +25,37 @@ const useStyles = makeStyles(theme => ({
 function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
 
+	const [profile, setProfile] = useState({
+		photoURL: currentUser.photoURL || '',
+		displayName: currentUser.displayName || ''
+	});
+
 	const handleDeleteAccount = () => {
-		dispatch({
-			type: actions.RESET_DATA
+		window.confirm('This cannot be undone! Are you sure?') &&
+			deleteUser()
+				.then(() => {
+					dispatch({
+						type: actions.RESET_DATA
+					});
+				})
+				.catch(err => {
+					dispatch({
+						type: actions.ADD_FLASH_MESSAGE,
+						payload: err.message
+					});
+				});
+	};
+
+	const handleTextFieldChange = evt => {
+		setProfile({
+			...profile,
+			[evt.target.name]: evt.target.value
 		});
+	};
+
+	const handleUpdateProfile = evt => {
+		evt.preventDefault();
+		updateProfile(profile).then(payload => console.log(payload));
 	};
 
 	return (
@@ -45,16 +74,38 @@ function Account({ dispatch, currentUser }) {
 					</Button>
 				</Grid>
 			</Grid>
-			<div className={classes.spacer}>
+
+			<form onSubmit={handleUpdateProfile}>
+				<Grid
+					alignItems='center'
+					spacing={1}
+					className={classes.spacer}
+					container>
+					<Grid item>
+						<UserAvatar
+							src={currentUser.photoURL}
+							name={currentUser.displayName}
+							email={currentUser.email}
+						/>
+					</Grid>
+					<Grid item>
+						<Button size='small'>Set avatar</Button>
+						{currentUser.photoURL && (
+							<Button size='small'>Remove avatar</Button>
+						)}
+					</Grid>
+				</Grid>
 				<TextField
 					id='account_name'
 					label='Display Name'
-					variant='filled'
+					value={profile.displayName}
+					name='displayName'
+					onChange={handleTextFieldChange}
 					className={classes.input}
 					fullWidth
 				/>
-				<Button>Save Display Name</Button>
-			</div>
+				<Button type='submit'>Update</Button>
+			</form>
 		</Container>
 	);
 }

@@ -30,8 +30,6 @@ function renderApp(user) {
 	);
 }
 
-let authLoaded = false;
-
 firebase.auth().onAuthStateChanged(function(user) {
 	console.log('onAuthStateChanged');
 	const newUser = user ? user.toJSON() : null;
@@ -39,11 +37,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 	renderApp(newUser);
 });
 
-if (authLoaded) {
-	renderApp();
-} else {
-	ReactDOM.render(<span>loading...</span>, document.getElementById('root'));
-}
+ReactDOM.render(<span>loading...</span>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

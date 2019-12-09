@@ -10,7 +10,6 @@ function reducer(state, action) {
 	switch (action.type) {
 		case actions.RESET_DATA: {
 			return {
-				...state,
 				favorites: [],
 				flashes: []
 			};

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-function UserAvatar({ user, onLogout }) {
+import UserAvatar from './User/UserAvatar';
+
+function UserMenu({ user, onLogout }) {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
@@ -20,21 +21,25 @@ function UserAvatar({ user, onLogout }) {
 	return (
 		<span>
 			<Button onClick={openMenu}>
-				<Avatar>{user.email.charAt(0)}</Avatar>
+				<UserAvatar
+					src={user.photoURL}
+					name={user.displayName}
+					email={user.email}
+				/>
 			</Button>
 			<Menu
 				id='user_menu'
 				anchorEl={anchorEl}
 				open={open}
 				onClose={closeMenu}
-				keepMounted>
+				variant='menu'>
 				<MenuItem component={RouterLink} to='/account'>
 					Account
 				</MenuItem>
-				<MenuItem onClick={closeMenu}>Logout</MenuItem>
+				<MenuItem onClick={onLogout}>Logout</MenuItem>
 			</Menu>
 		</span>
 	);
 }
 
-export default UserAvatar;
+export default UserMenu;
