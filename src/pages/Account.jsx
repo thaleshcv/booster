@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import UserAvatar from '../components/User/UserAvatar';
 import { deleteUser, updateProfile } from '../lib/user';
+import { uploadFile, deleteFile } from '../lib/storage';
 import { actions } from '../reducer';
 
 const useStyles = makeStyles(theme => ({
@@ -19,11 +20,16 @@ const useStyles = makeStyles(theme => ({
 	},
 	input: {
 		margin: theme.spacing(1, 0)
+	},
+	avatarInput: {
+		display: 'none'
 	}
 }));
 
 function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
+
+	const [avatarFile, setAvatarFile] = useState(null);
 
 	const [profile, setProfile] = useState({
 		photoURL: currentUser.photoURL || '',
@@ -53,9 +59,72 @@ function Account({ dispatch, currentUser }) {
 		});
 	};
 
-	const handleUpdateProfile = evt => {
+	const handleFileFieldChange = evt => {
+		const file = evt.target.files[0];
+
+		if (!file.type.match(/image\/(jpeg|png)/)) {
+			evt.target.value = null;
+			dispatch({
+				type: actions.ADD_FLASH_MESSAGE,
+				payload: 'File type not supported.'
+			});
+
+			setAvatarFile(null);
+			return;
+		}
+
+		setAvatarFile(file);
+	};
+
+	const handleClearAvatar = () => {
+		deleteFile(`avatars/${currentUser.uid}`)
+			.then(() =>
+				sendProfile({
+					photoURL: null
+				})
+			)
+			.catch(() => {
+				dispatch({
+					type: actions.ADD_FLASH_MESSAGE,
+					payload: 'Error deleting avatar.'
+				});
+			});
+	};
+
+	const handleSubmitProfile = evt => {
 		evt.preventDefault();
-		updateProfile(profile).then(payload => console.log(payload));
+
+		if (!avatarFile) {
+			sendProfile(profile);
+			return;
+		}
+
+		uploadAvatar(avatarFile)
+			.then(snapshot =>
+				snapshot.ref.getDownloadURL().then(downloadURL => downloadURL)
+			)
+			.then(photoURL =>
+				sendProfile({
+					...profile,
+					photoURL
+				})
+			);
+	};
+
+	const uploadAvatar = file => {
+		return uploadFile(file, { path: `avatars/${currentUser.uid}` });
+	};
+
+	const sendProfile = profile => {
+		// using location.reload() to force reload the updated user
+		return updateProfile(profile)
+			.then(() => window.location.reload())
+			.catch(() => {
+				dispatch({
+					type: actions.ADD_FLASH_MESSAGE,
+					payload: 'Error updating profile.'
+				});
+			});
 	};
 
 	return (
@@ -63,19 +132,21 @@ function Account({ dispatch, currentUser }) {
 			<Typography variant='h2' gutterBottom>
 				Account
 			</Typography>
-			<Grid justify='space-between' alignItems='center' container>
+			<Typography variant='body1'>{currentUser.email}</Typography>
+			<Grid alignItems='center' container>
 				<Grid item>
-					<Typography variant='body1'>{currentUser.email}</Typography>
-				</Grid>
-				<Grid item>
-					<Button>Reset password</Button>
 					<Button onClick={handleDeleteAccount} color='secondary'>
 						Delete account
 					</Button>
 				</Grid>
+				<Grid item>
+					<Button>Update Email</Button>
+				</Grid>
+				<Grid item>
+					<Button>Reset password</Button>
+				</Grid>
 			</Grid>
-
-			<form onSubmit={handleUpdateProfile}>
+			<form className={classes.spacer} onSubmit={handleSubmitProfile}>
 				<Grid
 					alignItems='center'
 					spacing={1}
@@ -89,9 +160,24 @@ function Account({ dispatch, currentUser }) {
 						/>
 					</Grid>
 					<Grid item>
-						<Button size='small'>Set avatar</Button>
+						<input
+							id='avatar_input'
+							type='file'
+							multiple={false}
+							accept='image/*'
+							name='avatarFile'
+							className={classes.avatarInput}
+							onChange={handleFileFieldChange}
+						/>
+						<label htmlFor='avatar_input'>
+							<Button component='span' size='small'>
+								Set avatar
+							</Button>
+						</label>
 						{currentUser.photoURL && (
-							<Button size='small'>Remove avatar</Button>
+							<Button onClick={handleClearAvatar} size='small'>
+								Remove avatar
+							</Button>
 						)}
 					</Grid>
 				</Grid>
@@ -104,7 +190,7 @@ function Account({ dispatch, currentUser }) {
 					className={classes.input}
 					fullWidth
 				/>
-				<Button type='submit'>Update</Button>
+				<Button type='submit'>Update Profile</Button>
 			</form>
 		</Container>
 	);

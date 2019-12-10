@@ -13,18 +13,12 @@ export function updateProfile({ displayName, photoURL }) {
 		throw new Error('Authentication required.');
 	}
 
-	const payload = {};
-	if (displayName) {
-		payload.displayName = displayName;
-	}
-
-	if (photoURL) {
-		payload.photoURL = photoURL;
-	}
-
 	return firebase
 		.auth()
-		.currentUser.updateProfile(payload)
+		.currentUser.updateProfile({
+			displayName,
+			photoURL
+		})
 		.then(() => firebase.auth().currentUser.reload());
 }
 
