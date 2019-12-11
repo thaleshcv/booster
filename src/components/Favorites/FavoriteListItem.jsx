@@ -48,6 +48,7 @@ function FavoriteListItem({
 	posterPath,
 	backdropPath,
 	movieId,
+	watched,
 	onDelete,
 	onWatched
 }) {
@@ -72,8 +73,10 @@ function FavoriteListItem({
 						onClick={() => onDelete(id)}>
 						<DeleteIcon />
 					</IconButton>
-					<IconButton title='Mark as watched' onClick={() => onWatched(id)}>
-						<DoneOutlineIcon />
+					<IconButton
+						title='Mark as watched'
+						onClick={() => onWatched(id, !watched)}>
+						{watched ? <DoneIcon /> : <DoneOutlineIcon />}
 					</IconButton>
 				</CardActions>
 			</CardContent>

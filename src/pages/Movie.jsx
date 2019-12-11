@@ -2,15 +2,22 @@ import React, { Fragment, useEffect, useState } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { red, green } from '@material-ui/core/colors';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import WatchedIcon from '@material-ui/icons/Done';
+import WatchedBorderIcon from '@material-ui/icons/DoneOutline';
 
 import MovieGenres from '../components/Movies/MovieGenres';
 import VoteAverage from '../components/Movies/VoteAverage';
 import { getPosterUrl, getMovie } from '../lib/tmdb';
-import { createFavorite, deleteFavorite } from '../lib/favorites';
+import {
+	createFavorite,
+	deleteFavorite,
+	setFavoriteWatched
+} from '../lib/favorites';
 
 import { actions } from '../reducer';
 
@@ -43,11 +50,16 @@ const useStyles = makeStyles(theme => ({
 		alignItems: 'center'
 	},
 	favoriteIcon: {
-		fontSize: '1.5em'
+		fontSize: '1.5em',
+		color: red['500']
+	},
+	watchIcon: {
+		fontSize: '1.5em',
+		color: green['500']
 	}
 }));
 
-function Movie({ currentUser, dispatch, movieId, favoriteId }) {
+function Movie({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
@@ -67,6 +79,20 @@ function Movie({ currentUser, dispatch, movieId, favoriteId }) {
 				setLoading(false);
 			});
 	}, [movieId]);
+
+	const handleWatch = () => {
+		const newWatchedValue = !watched;
+
+		setFavoriteWatched(favoriteId, newWatchedValue).then(() => {
+			dispatch({
+				type: actions.UPDATE_FAVORITE,
+				payload: {
+					id: favoriteId,
+					watched: newWatchedValue
+				}
+			});
+		});
+	};
 
 	const handleFavorite = () => {
 		if (!currentUser) {
@@ -120,6 +146,7 @@ function Movie({ currentUser, dispatch, movieId, favoriteId }) {
 	}
 
 	const FavIcon = favoriteId ? FavoriteIcon : FavoriteBorderIcon;
+	const WatchIcon = watched ? WatchedIcon : WatchedBorderIcon;
 
 	return (
 		<Fragment>
@@ -147,12 +174,22 @@ function Movie({ currentUser, dispatch, movieId, favoriteId }) {
 							<MovieGenres genres={movie.genres} />
 						</Grid>
 						<Grid item>
-							<IconButton onClick={handleFavorite}>
+							<IconButton
+								title={
+									favoriteId ? 'Remove from favorites' : 'Add to favorites'
+								}
+								onClick={handleFavorite}>
 								<FavIcon className={classes.favoriteIcon} />
 							</IconButton>
+							{favoriteId && (
+								<IconButton
+									title={`Set movie as${watched ? ' not ' : ' '}watched`}
+									onClick={handleWatch}>
+									<WatchIcon className={classes.watchIcon} />
+								</IconButton>
+							)}
 						</Grid>
 					</Grid>
-
 					<Typography variant='body1' color='textSecondary' paragraph>
 						{movie.tagline}
 					</Typography>

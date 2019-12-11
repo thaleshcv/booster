@@ -2,6 +2,7 @@ export const actions = {
 	RESET_DATA: 'RESET_DATA',
 	ADD_FAVORITES: 'ADD_FAVORITES',
 	REMOVE_FAVORITE: 'REMOVE_FAVORITE',
+	UPDATE_FAVORITE: 'UPDATE_FAVORITE',
 	ADD_FLASH_MESSAGE: 'ADD_FLASH_MESSAGE',
 	SHIFT_FLASH_MESSAGE: 'SHIFT_FLASH_MESSAGE'
 };
@@ -24,6 +25,23 @@ function reducer(state, action) {
 			return {
 				...state,
 				favorites: state.favorites.filter(f => f.id !== action.payload)
+			};
+		}
+		case actions.UPDATE_FAVORITE: {
+			const idx = state.favorites.findIndex(f => f.id === action.payload.id);
+			if (idx < 0) {
+				return state;
+			}
+
+			const favorites = [].concat(state.favorites);
+			favorites[idx] = {
+				...favorites[idx],
+				...action.payload
+			};
+
+			return {
+				...state,
+				favorites
 			};
 		}
 		case actions.ADD_FLASH_MESSAGE: {

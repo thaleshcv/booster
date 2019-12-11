@@ -3,7 +3,7 @@ import FavoriteList from '../components/Favorites/FavoriteList';
 import FavoriteListItem from '../components/Favorites/FavoriteListItem';
 
 import { actions } from '../reducer';
-import { deleteFavorite } from '../lib/favorites';
+import { deleteFavorite, setFavoriteWatched } from '../lib/favorites';
 
 function Favorites({ dispatch, favorites }) {
 	const handleDeleteFavorite = favId => {
@@ -20,12 +20,25 @@ function Favorites({ dispatch, favorites }) {
 		);
 	};
 
+	const handleToggleWatched = (favId, watched) => {
+		setFavoriteWatched(favId, watched).then(() => {
+			dispatch({
+				type: actions.UPDATE_FAVORITE,
+				payload: {
+					id: favId,
+					watched
+				}
+			});
+		});
+	};
+
 	return (
 		<FavoriteList>
 			{favorites.map(favorite => (
 				<FavoriteListItem
 					key={favorite.id}
 					onDelete={handleDeleteFavorite}
+					onWatched={handleToggleWatched}
 					{...favorite}
 				/>
 			))}

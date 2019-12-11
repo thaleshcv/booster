@@ -67,3 +67,11 @@ export function getUserFavorites() {
 			return results;
 		});
 }
+
+export function setFavoriteWatched(favoriteId, watched) {
+	return firebase
+		.firestore()
+		.collection('favorites')
+		.doc(favoriteId)
+		.set({ watched }, { merge: true });
+}

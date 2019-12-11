@@ -1,4 +1,10 @@
-import React, { useReducer, useEffect, Fragment, useCallback } from 'react';
+import React, {
+	useReducer,
+	useEffect,
+	Fragment,
+	useCallback,
+	useMemo
+} from 'react';
 import { Link as RouterLink, Redirect, Route, Switch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -68,14 +74,8 @@ function App({ currentUser }) {
 		});
 	};
 
-	const findMovieOnFavorites = useCallback(
-		movieId => {
-			const favorite = state.favorites.find(
-				fav => String(fav.movieId) === movieId
-			);
-
-			return favorite ? favorite.id : null;
-		},
+	const findMovieFavorite = useCallback(
+		movieId => state.favorites.find(fav => String(fav.movieId) === movieId),
 		[state.favorites]
 	);
 
@@ -142,14 +142,19 @@ function App({ currentUser }) {
 							<RegisterPage />
 						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
-							{({ match }) => (
-								<MoviePage
-									currentUser={currentUser}
-									movieId={match.params.movieId}
-									favoriteId={findMovieOnFavorites(match.params.movieId)}
-									dispatch={dispatch}
-								/>
-							)}
+							{({ match }) => {
+								const movieFavorite = findMovieFavorite(match.params.movieId);
+
+								return (
+									<MoviePage
+										currentUser={currentUser}
+										movieId={match.params.movieId}
+										favoriteId={movieFavorite ? movieFavorite.id : null}
+										watched={movieFavorite ? movieFavorite.watched : false}
+										dispatch={dispatch}
+									/>
+								);
+							}}
 						</Route>
 					</Switch>
 				</Paper>
