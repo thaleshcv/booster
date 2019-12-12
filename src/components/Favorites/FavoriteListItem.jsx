@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,17 +8,18 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
+import TimerIcon from '@material-ui/icons/AccessTime';
 import DeleteIcon from '@material-ui/icons/Delete';
 import DoneIcon from '@material-ui/icons/Done';
-import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
-
 import { makeStyles } from '@material-ui/core/styles';
+import { green, orange } from '@material-ui/core/colors';
 
 import { getPosterUrl } from '../../lib/tmdb';
 
 const useStyles = makeStyles(theme => ({
 	card: {
 		display: 'flex',
+		alignItems: 'stretch',
 		maxWidth: 370,
 		margin: theme.spacing(2)
 	},
@@ -28,17 +30,29 @@ const useStyles = makeStyles(theme => ({
 	},
 	content: {
 		flex: 1,
+		padding: 0,
 		display: 'flex',
 		flexDirection: 'column',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		'&:last-child': {
+			paddingBottom: 0
+		}
 	},
 	controls: {
+		padding: 0,
 		display: 'flex',
 		justifyContent: 'center',
 		width: '100%'
 	},
 	title: {
-		fontWeight: theme.typography.fontWeightMedium
+		fontWeight: theme.typography.fontWeightMedium,
+		padding: theme.spacing(1)
+	},
+	notWatchedBtn: {
+		color: orange[500]
+	},
+	watchedBtn: {
+		color: green[500]
 	}
 }));
 
@@ -69,15 +83,30 @@ function FavoriteListItem({
 				</Link>
 				<CardActions className={classes.controls}>
 					<IconButton
+						color='secondary'
 						title='Remove from favorites'
 						onClick={() => onDelete(id)}>
 						<DeleteIcon />
 					</IconButton>
-					<IconButton
-						title='Mark as watched'
-						onClick={() => onWatched(id, !watched)}>
-						{watched ? <DoneIcon /> : <DoneOutlineIcon />}
-					</IconButton>
+					{watched ? (
+						<Button
+							className={classes.watchedBtn}
+							size='small'
+							title='Mark as not watched'
+							onClick={() => onWatched(id, !watched)}
+							endIcon={<DoneIcon />}>
+							Watched
+						</Button>
+					) : (
+						<Button
+							className={classes.notWatchedBtn}
+							size='small'
+							title='Mark as watched'
+							onClick={() => onWatched(id, !watched)}
+							endIcon={<TimerIcon />}>
+							Waiting
+						</Button>
+					)}
 				</CardActions>
 			</CardContent>
 		</Card>
