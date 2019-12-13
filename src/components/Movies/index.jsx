@@ -10,16 +10,16 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import WatchedIcon from '@material-ui/icons/Done';
 import WatchedBorderIcon from '@material-ui/icons/DoneOutline';
 
-import MovieGenres from '../components/Movies/MovieGenres';
-import VoteAverage from '../components/Movies/VoteAverage';
-import { getPosterUrl, getMovie } from '../lib/tmdb';
+import MovieGenres from './MovieGenres';
+import VoteAverage from './VoteAverage';
+import { getPosterUrl, getMovie } from '../../lib/tmdb';
 import {
 	createFavorite,
 	deleteFavorite,
 	setFavoriteWatched
-} from '../lib/favorites';
+} from '../../lib/favorites';
 
-import { actions } from '../reducer';
+import { actions } from '../../reducer';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Movie({ currentUser, dispatch, movieId, favoriteId, watched }) {
+function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
@@ -220,4 +220,4 @@ function Movie({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	);
 }
 
-export default Movie;
+export default Movies;

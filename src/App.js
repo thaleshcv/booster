@@ -6,15 +6,19 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProtectedRoute from './components/ProtectedRoute';
+
+// UI components
 import Flash from './components/Flash';
 import Header from './components/Header';
 import UserMenu from './components/UserMenu';
-import AccountPage from './pages/Account';
-import DiscoverPage from './pages/Discover';
-import LoginPage from './pages/Login';
-import MoviePage from './pages/Movie';
-import RegisterPage from './pages/Register';
-import FavoritesPage from './pages/Favorites';
+
+// pages imports
+import AccountPage from './components/Account';
+import DiscoverPage from './components/Discover';
+import LoginPage from './components/Login';
+import FavoritesPage from './components/Favorites';
+import MoviesPage from './components/Movies';
+import RegisterPage from './components/User/Register';
 
 import { logoutUser } from './lib/auth';
 import { getUserFavorites } from './lib/favorites';
@@ -132,7 +136,7 @@ function App({ currentUser }) {
 							{({ match }) => {
 								const movieFavorite = findMovieFavorite(match.params.movieId);
 								return (
-									<MoviePage
+									<MoviesPage
 										currentUser={currentUser}
 										movieId={match.params.movieId}
 										favoriteId={movieFavorite ? movieFavorite.id : null}

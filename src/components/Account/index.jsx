@@ -6,12 +6,12 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import UserAvatar from '../components/User/UserAvatar';
+import UserAvatar from '../User/UserAvatar';
 
-import { resetPassword } from '../lib/auth';
-import { deleteUser, updateProfile } from '../lib/user';
-import { uploadFile, deleteFile } from '../lib/storage';
-import { actions } from '../reducer';
+import { resetPassword } from '../../lib/auth';
+import { deleteUser, updateProfile } from '../../lib/user';
+import { uploadFile, deleteFile } from '../../lib/storage';
+import { actions } from '../../reducer';
 
 const useStyles = makeStyles(theme => ({
 	container: {

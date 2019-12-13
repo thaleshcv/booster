@@ -5,9 +5,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import LoginForm from '../components/Auth/LoginForm';
+import UserForm from './UserForm';
 
-import { authenticate } from '../lib/auth';
+import { createUser } from '../../lib/user';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -19,13 +19,13 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Login({ redirectTo }) {
+function Register({ redirectTo }) {
 	const classes = useStyles();
 	const [error, setError] = useState();
 	const history = useHistory();
 
 	const handleSubmit = data => {
-		return authenticate(data.email, data.password)
+		createUser(data)
 			.then(() => {
 				history.push({
 					pathname: redirectTo
@@ -42,23 +42,17 @@ function Login({ redirectTo }) {
 				Welcome to booster
 			</Typography>
 			<Typography variant='body1' gutterBottom>
-				Please, login to enter...
+				Please, register to enter...
 			</Typography>
 
 			{error && <Typography color='error'>{error}</Typography>}
-			<LoginForm onSubmit={handleSubmit} />
+			<UserForm onSubmit={handleSubmit} />
 
 			<Grid spacing={2} container>
 				<Grid xs={12} item>
-					<Typography variant='body1'>Don't have an account?</Typography>
-					<Button variant='contained' component={RouterLink} to='/register'>
-						Register here
-					</Button>
-				</Grid>
-				<Grid xs={12} item>
-					<Typography variant='body1'>Forgot your password?</Typography>
+					<Typography variant='body1'>Already registered?</Typography>
 					<Button variant='contained' component={RouterLink} to='/login'>
-						Request a new password
+						Login here
 					</Button>
 				</Grid>
 			</Grid>
@@ -66,4 +60,4 @@ function Login({ redirectTo }) {
 	);
 }
 
-export default Login;
+export default Register;

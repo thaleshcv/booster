@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import UserForm from '../components/User/UserForm';
-
-import { createUser } from '../lib/user';
+import LoginForm from './LoginForm';
+import { authenticate } from '../../lib/auth';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -20,13 +18,13 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Register({ redirectTo }) {
+function Login({ redirectTo }) {
 	const classes = useStyles();
 	const [error, setError] = useState();
 	const history = useHistory();
 
 	const handleSubmit = data => {
-		createUser(data)
+		return authenticate(data.email, data.password)
 			.then(() => {
 				history.push({
 					pathname: redirectTo
@@ -43,17 +41,23 @@ function Register({ redirectTo }) {
 				Welcome to booster
 			</Typography>
 			<Typography variant='body1' gutterBottom>
-				Please, register to enter...
+				Please, login to enter...
 			</Typography>
 
 			{error && <Typography color='error'>{error}</Typography>}
-			<UserForm onSubmit={handleSubmit} />
+			<LoginForm onSubmit={handleSubmit} />
 
 			<Grid spacing={2} container>
 				<Grid xs={12} item>
-					<Typography variant='body1'>Already registered?</Typography>
+					<Typography variant='body1'>Don't have an account?</Typography>
+					<Button variant='contained' component={RouterLink} to='/register'>
+						Register here
+					</Button>
+				</Grid>
+				<Grid xs={12} item>
+					<Typography variant='body1'>Forgot your password?</Typography>
 					<Button variant='contained' component={RouterLink} to='/login'>
-						Login here
+						Request a new password
 					</Button>
 				</Grid>
 			</Grid>
@@ -61,4 +65,4 @@ function Register({ redirectTo }) {
 	);
 }
 
-export default Register;
+export default Login;

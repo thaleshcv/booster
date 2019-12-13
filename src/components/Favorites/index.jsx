@@ -6,10 +6,10 @@ import Grid from '@material-ui/core/Grid';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 
-import FavoriteList from '../components/Favorites/FavoriteList';
-import FavoriteListItem from '../components/Favorites/FavoriteListItem';
-import { actions } from '../reducer';
-import { deleteFavorite, setFavoriteWatched } from '../lib/favorites';
+import FavoriteList from './FavoriteList';
+import FavoriteListItem from './FavoriteListItem';
+import { actions } from '../../reducer';
+import { deleteFavorite, setFavoriteWatched } from '../../lib/favorites';
 
 function applyFilterOnFavorites(favorites, filter) {
 	if (filter.hideWatched) {

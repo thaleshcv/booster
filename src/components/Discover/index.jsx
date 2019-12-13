@@ -4,12 +4,12 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-import SearchInput from '../components/SearchInput';
-import MovieList from '../components/Movies/MovieList';
-import MovieListItem from '../components/Movies/MovieListItem';
-import Pagination from '../components/Pagination';
+import SearchInput from '../SearchInput';
+import MovieList from '../Movies/MovieList';
+import MovieListItem from '../Movies/MovieListItem';
+import Pagination from '../Pagination';
 
-import { getMovies, searchMovies } from '../lib/tmdb';
+import { getMovies, searchMovies } from '../../lib/tmdb';
 
 function fetchMovies(query, page) {
 	return query ? searchMovies({ query, page }) : getMovies({ page });
