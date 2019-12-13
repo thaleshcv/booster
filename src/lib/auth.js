@@ -11,3 +11,7 @@ export function authenticate(email, password) {
 export function logoutUser() {
 	return firebase.auth().signOut();
 }
+
+export function resetPassword(email) {
+	return firebase.auth().sendPasswordResetEmail(email);
+}

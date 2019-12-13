@@ -7,6 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 import UserAvatar from '../components/User/UserAvatar';
+
+import { resetPassword } from '../lib/auth';
 import { deleteUser, updateProfile } from '../lib/user';
 import { uploadFile, deleteFile } from '../lib/storage';
 import { actions } from '../reducer';
@@ -50,6 +52,16 @@ function Account({ dispatch, currentUser }) {
 						payload: err.message
 					});
 				});
+	};
+
+	const handleResetPassword = () => {
+		return resetPassword(currentUser.email).then(() => {
+			dispatch({
+				type: actions.ADD_FLASH_MESSAGE,
+				payload:
+					'A message was sent to your email with instructions to reset your password.'
+			});
+		});
 	};
 
 	const handleTextFieldChange = evt => {
@@ -140,10 +152,7 @@ function Account({ dispatch, currentUser }) {
 					</Button>
 				</Grid>
 				<Grid item>
-					<Button>Update Email</Button>
-				</Grid>
-				<Grid item>
-					<Button>Reset password</Button>
+					<Button onClick={handleResetPassword}>Reset password</Button>
 				</Grid>
 			</Grid>
 			<form className={classes.spacer} onSubmit={handleSubmitProfile}>
