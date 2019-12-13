@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import UserAvatar from './User/UserAvatar';
+import UserAvatar from './UserAvatar';
 
 function UserMenu({ user, onLogout }) {
 	const [anchorEl, setAnchorEl] = useState(null);

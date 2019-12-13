@@ -10,7 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 // UI components
 import Flash from './components/Flash';
 import Header from './components/Header';
-import UserMenu from './components/UserMenu';
+import UserMenu from './components/User/UserMenu';
 
 // pages imports
 import AccountPage from './components/Account';
