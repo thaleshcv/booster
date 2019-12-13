@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -19,15 +19,17 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Login() {
+function Login({ redirectTo }) {
 	const classes = useStyles();
-
 	const [error, setError] = useState();
+	const history = useHistory();
 
 	const handleSubmit = data => {
 		return authenticate(data.email, data.password)
-			.then(response => {
-				console.log(response);
+			.then(() => {
+				history.push({
+					pathname: redirectTo
+				});
 			})
 			.catch(err => {
 				setError(err.message);

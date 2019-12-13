@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
@@ -20,18 +20,19 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Register() {
+function Register({ redirectTo }) {
 	const classes = useStyles();
-
 	const [error, setError] = useState();
+	const history = useHistory();
 
 	const handleSubmit = data => {
 		createUser(data)
-			.then(response => {
-				console.log(response);
+			.then(() => {
+				history.push({
+					pathname: redirectTo
+				});
 			})
 			.catch(err => {
-				console.error(err);
 				setError(err.message);
 			});
 	};

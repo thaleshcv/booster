@@ -1,10 +1,4 @@
-import React, {
-	useReducer,
-	useEffect,
-	Fragment,
-	useCallback,
-	useMemo
-} from 'react';
+import React, { useReducer, useEffect, Fragment, useCallback } from 'react';
 import { Link as RouterLink, Redirect, Route, Switch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -17,7 +11,6 @@ import Header from './components/Header';
 import UserMenu from './components/UserMenu';
 import AccountPage from './pages/Account';
 import DiscoverPage from './pages/Discover';
-import HomePage from './pages/Home';
 import LoginPage from './pages/Login';
 import MoviePage from './pages/Movie';
 import RegisterPage from './pages/Register';
@@ -40,6 +33,8 @@ const useStyles = makeStyles(theme => ({
 		justifyContent: 'space-between'
 	}
 }));
+
+const HOME_PATH = '/discover';
 
 function App({ currentUser }) {
 	const classes = useStyles();
@@ -79,15 +74,10 @@ function App({ currentUser }) {
 		[state.favorites]
 	);
 
-	console.log('App State', state);
-
 	return (
 		<Fragment>
 			<Header className={classes.header}>
 				<div>
-					<Button component={RouterLink} to='/' color='inherit'>
-						Home
-					</Button>
 					<Button component={RouterLink} to='/discover' color='inherit'>
 						Discover
 					</Button>
@@ -111,9 +101,6 @@ function App({ currentUser }) {
 				</Flash>
 				<Paper>
 					<Switch>
-						<Route path='/' exact>
-							<HomePage />
-						</Route>
 						<Route path='/discover'>
 							<DiscoverPage />
 						</Route>
@@ -133,18 +120,17 @@ function App({ currentUser }) {
 							path='/login'
 							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
-							<LoginPage />
+							<LoginPage redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/register'
 							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
-							<RegisterPage />
+							<RegisterPage redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
 							{({ match }) => {
 								const movieFavorite = findMovieFavorite(match.params.movieId);
-
 								return (
 									<MoviePage
 										currentUser={currentUser}
@@ -156,6 +142,7 @@ function App({ currentUser }) {
 								);
 							}}
 						</Route>
+						<Redirect to={HOME_PATH} />
 					</Switch>
 				</Paper>
 			</Container>
