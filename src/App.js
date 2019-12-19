@@ -11,7 +11,7 @@ import Header from './components/Header';
 import UserMenu from './components/User/UserMenu';
 
 // pages imports
-import AccountPage from './components/Account';
+import AccountPage from './components/User';
 import DiscoverPage from './components/Discover';
 import LoginPage from './components/Login';
 import FavoritesPage from './components/Favorites';
@@ -57,18 +57,18 @@ function App({ currentUser }) {
 	const { addFavorites } = useFavorites(dispatch);
 	const { shiftFlashMessage } = useFlash(dispatch);
 
-	useEffect(() => {
-		if (currentUser) {
-			getUserFavorites().then(favorites => addFavorites(favorites));
-		}
-	}, [addFavorites, currentUser]);
-
 	const handleFlashClose = () => shiftFlashMessage();
 
 	const handleLogout = () => logoutUser().then(() => resetData());
 
 	const findMovieFavorite = movieId =>
 		state.favorites.find(fav => String(fav.movieId) === movieId);
+
+	useEffect(() => {
+		if (currentUser) {
+			getUserFavorites().then(favorites => addFavorites(favorites));
+		}
+	}, [addFavorites, currentUser]);
 
 	console.debug('App State', state);
 

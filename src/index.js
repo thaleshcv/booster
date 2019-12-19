@@ -31,9 +31,7 @@ function renderApp(user) {
 }
 
 firebase.auth().onAuthStateChanged(function(user) {
-	console.log('onAuthStateChanged');
 	const newUser = user ? user.toJSON() : null;
-
 	renderApp(newUser);
 });
 

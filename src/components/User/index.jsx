@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import UserAvatar from '../User/UserAvatar';
+import UserAvatar from './UserAvatar';
 
 import { resetPassword } from '../../lib/auth';
 import { deleteUser, updateProfile } from '../../lib/user';
