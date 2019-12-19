@@ -11,7 +11,9 @@ import UserAvatar from '../User/UserAvatar';
 import { resetPassword } from '../../lib/auth';
 import { deleteUser, updateProfile } from '../../lib/user';
 import { uploadFile, deleteFile } from '../../lib/storage';
+
 import { actions } from '../../reducer';
+import useFlash from '../../actions/flash';
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -30,8 +32,8 @@ const useStyles = makeStyles(theme => ({
 
 function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
-
 	const [avatarFile, setAvatarFile] = useState(null);
+	const { addFlashMessage } = useFlash(dispatch);
 
 	const [profile, setProfile] = useState({
 		photoURL: currentUser.photoURL || '',
@@ -46,22 +48,17 @@ function Account({ dispatch, currentUser }) {
 						type: actions.RESET_DATA
 					});
 				})
-				.catch(err => {
-					dispatch({
-						type: actions.ADD_FLASH_MESSAGE,
-						payload: err.message
-					});
-				});
+				.catch(err => addFlashMessage(err.message));
 	};
 
 	const handleResetPassword = () => {
-		return resetPassword(currentUser.email).then(() => {
-			dispatch({
-				type: actions.ADD_FLASH_MESSAGE,
-				payload:
+		return resetPassword(currentUser.email)
+			.then(() =>
+				addFlashMessage(
 					'A message was sent to your email with instructions to reset your password.'
-			});
-		});
+				)
+			)
+			.catch(err => addFlashMessage(err.message));
 	};
 
 	const handleTextFieldChange = evt => {
@@ -76,12 +73,10 @@ function Account({ dispatch, currentUser }) {
 
 		if (!file.type.match(/image\/(jpeg|png)/)) {
 			evt.target.value = null;
-			dispatch({
-				type: actions.ADD_FLASH_MESSAGE,
-				payload: 'File type not supported.'
-			});
 
 			setAvatarFile(null);
+			addFlashMessage('File type not supported.');
+
 			return;
 		}
 
@@ -96,10 +91,7 @@ function Account({ dispatch, currentUser }) {
 				})
 			)
 			.catch(() => {
-				dispatch({
-					type: actions.ADD_FLASH_MESSAGE,
-					payload: 'Error deleting avatar.'
-				});
+				addFlashMessage('Error deleting avatar.');
 			});
 	};
 
@@ -131,12 +123,7 @@ function Account({ dispatch, currentUser }) {
 		// using location.reload() to force reload the updated user
 		return updateProfile(profile)
 			.then(() => window.location.reload())
-			.catch(() => {
-				dispatch({
-					type: actions.ADD_FLASH_MESSAGE,
-					payload: 'Error updating profile.'
-				});
-			});
+			.catch(() => addFlashMessage('Error updating profile.'));
 	};
 
 	return (

@@ -12,6 +12,7 @@ import WatchedBorderIcon from '@material-ui/icons/DoneOutline';
 
 import MovieGenres from './MovieGenres';
 import VoteAverage from './VoteAverage';
+
 import { getPosterUrl, getMovie } from '../../lib/tmdb';
 import {
 	createFavorite,
@@ -19,7 +20,8 @@ import {
 	setFavoriteWatched
 } from '../../lib/favorites';
 
-import { actions } from '../../reducer';
+import useFavorites from '../../actions/favorites';
+import useFlash from '../../actions/flash';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -65,15 +67,18 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const [movie, setMovie] = useState();
 	const [loading, setLoading] = useState(false);
 
+	const { addFavorites, updateFavorite, removeFavorite } = useFavorites(
+		dispatch
+	);
+
+	const { addFlashMessage } = useFlash(dispatch);
+
 	useEffect(() => {
 		setLoading(true);
 
 		getMovie(movieId)
 			.then(movie => {
 				setMovie(movie);
-			})
-			.catch(response => {
-				console.error('failed', response);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -83,53 +88,28 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const handleWatch = () => {
 		const newWatchedValue = !watched;
 
-		setFavoriteWatched(favoriteId, newWatchedValue).then(() => {
-			dispatch({
-				type: actions.UPDATE_FAVORITE,
-				payload: {
-					id: favoriteId,
-					watched: newWatchedValue
-				}
-			});
-		});
+		setFavoriteWatched(favoriteId, newWatchedValue).then(() =>
+			updateFavorite({
+				id: favoriteId,
+				watched: newWatchedValue
+			})
+		);
 	};
 
 	const handleFavorite = () => {
 		if (!currentUser) {
-			dispatch({
-				type: actions.ADD_FLASH_MESSAGE,
-				payload: 'You have to log in first'
-			});
-
+			addFlashMessage('You have to log in first');
 			return;
 		}
 
 		if (favoriteId) {
-			deleteFavorite(favoriteId).then(() => {
-				dispatch([
-					{
-						type: actions.REMOVE_FAVORITE,
-						payload: favoriteId
-					},
-					{
-						type: actions.ADD_FLASH_MESSAGE,
-						payload: 'Movie removed from favorites'
-					}
-				]);
-			});
+			deleteFavorite(favoriteId)
+				.then(() => removeFavorite(favoriteId))
+				.then(() => addFlashMessage('Movie removed from favorites'));
 		} else {
-			createFavorite(movie).then(favorite => {
-				dispatch([
-					{
-						type: actions.ADD_FAVORITES,
-						payload: favorite
-					},
-					{
-						type: actions.ADD_FLASH_MESSAGE,
-						payload: 'Movie added to favorites'
-					}
-				]);
-			});
+			createFavorite(movie)
+				.then(favorite => addFavorites(favorite))
+				.then(() => addFlashMessage('Movie added to favorites'));
 		}
 	};
 

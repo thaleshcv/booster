@@ -8,8 +8,8 @@ import Typography from '@material-ui/core/Typography';
 
 import FavoriteList from './FavoriteList';
 import FavoriteListItem from './FavoriteListItem';
-import { actions } from '../../reducer';
 import { deleteFavorite, setFavoriteWatched } from '../../lib/favorites';
+import useFavorites from '../../actions/favorites';
 
 function applyFilterOnFavorites(favorites, filter) {
 	if (filter.hideWatched) {
@@ -21,31 +21,23 @@ function applyFilterOnFavorites(favorites, filter) {
 
 function Favorites({ dispatch, favorites }) {
 	const [hideWatched, setHideWatched] = useState(false);
+	const { updateFavorite, removeFavorite } = useFavorites(dispatch);
 
 	const handleDeleteFavorite = favId => {
 		return (
 			window.confirm(
 				'This will remove this movie from your favorites. Are you sure?'
-			) &&
-			deleteFavorite(favId).then(() => {
-				dispatch({
-					type: actions.REMOVE_FAVORITE,
-					payload: favId
-				});
-			})
+			) && deleteFavorite(favId).then(() => removeFavorite(favId))
 		);
 	};
 
 	const handleToggleWatched = (favId, watched) => {
-		setFavoriteWatched(favId, watched).then(() => {
-			dispatch({
-				type: actions.UPDATE_FAVORITE,
-				payload: {
-					id: favId,
-					watched
-				}
-			});
-		});
+		setFavoriteWatched(favId, watched).then(() =>
+			updateFavorite({
+				id: favId,
+				watched
+			})
+		);
 	};
 
 	const handleHideWatched = () => {

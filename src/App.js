@@ -1,11 +1,9 @@
-import React, { useReducer, useEffect, Fragment, useCallback } from 'react';
+import React, { useReducer, useEffect, Fragment } from 'react';
 import { Link as RouterLink, Redirect, Route, Switch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-
-import ProtectedRoute from './components/ProtectedRoute';
 
 // UI components
 import Flash from './components/Flash';
@@ -20,10 +18,17 @@ import FavoritesPage from './components/Favorites';
 import MoviesPage from './components/Movies';
 import RegisterPage from './components/User/Register';
 
+// actions imports
+import useApp from './actions/app';
+import useFlash from './actions/flash';
+import useFavorites from './actions/favorites';
+
+// others imports
+import reducer from './reducer';
 import { logoutUser } from './lib/auth';
 import { getUserFavorites } from './lib/favorites';
+import ProtectedRoute from './components/ProtectedRoute';
 
-import reducer, { actions } from './reducer';
 import './App.css';
 
 const useStyles = makeStyles(theme => ({
@@ -48,35 +53,24 @@ function App({ currentUser }) {
 		flashes: []
 	});
 
+	const { resetData } = useApp(dispatch);
+	const { addFavorites } = useFavorites(dispatch);
+	const { shiftFlashMessage } = useFlash(dispatch);
+
 	useEffect(() => {
 		if (currentUser) {
-			getUserFavorites().then(payload => {
-				dispatch({
-					type: actions.ADD_FAVORITES,
-					payload
-				});
-			});
+			getUserFavorites().then(favorites => addFavorites(favorites));
 		}
-	}, [currentUser]);
+	}, [addFavorites, currentUser]);
 
-	const handleFlashClose = () => {
-		dispatch({
-			type: actions.SHIFT_FLASH_MESSAGE
-		});
-	};
+	const handleFlashClose = () => shiftFlashMessage();
 
-	const handleLogout = () => {
-		logoutUser().then(() => {
-			dispatch({
-				type: actions.RESET_DATA
-			});
-		});
-	};
+	const handleLogout = () => logoutUser().then(() => resetData());
 
-	const findMovieFavorite = useCallback(
-		movieId => state.favorites.find(fav => String(fav.movieId) === movieId),
-		[state.favorites]
-	);
+	const findMovieFavorite = movieId =>
+		state.favorites.find(fav => String(fav.movieId) === movieId);
+
+	console.debug('App State', state);
 
 	return (
 		<Fragment>
