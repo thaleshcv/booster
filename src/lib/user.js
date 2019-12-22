@@ -29,3 +29,12 @@ export function deleteUser() {
 
 	return firebase.auth().currentUser.delete();
 }
+
+export function reauthenticate(email, password) {
+	const credential = firebase.auth.EmailAuthProvider.credential(
+		email,
+		password
+	);
+
+	return firebase.auth().currentUser.reauthenticateWithCredential(credential);
+}
