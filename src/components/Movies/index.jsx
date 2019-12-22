@@ -189,7 +189,7 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='body2'>
+							<Typography align='right' color='textSecondary' variant='body2'>
 								Runtime: {movie.runtime} minutes
 							</Typography>
 						</Grid>
