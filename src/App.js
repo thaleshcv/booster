@@ -1,8 +1,10 @@
 import React, { useReducer, useEffect, Fragment } from 'react';
 import { Link as RouterLink, Redirect, Route, Switch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 // UI components
@@ -40,6 +42,27 @@ const useStyles = makeStyles(theme => ({
 	header: {
 		display: 'flex',
 		justifyContent: 'space-between'
+	},
+	progress: {
+		position: 'fixed',
+		top: 0,
+		left: 0,
+		height: '100%',
+		width: '100%',
+		display: 'none',
+		justifyContent: 'center',
+		alignItems: 'center',
+		zIndex: 999999999
+	},
+	innerProgress: {
+		width: '240px',
+		height: '240px',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+		background: 'rgba(150,150,150,0.5)',
+		borderRadius: '10%'
 	}
 }));
 
@@ -49,6 +72,7 @@ function App({ currentUser }) {
 	const classes = useStyles();
 
 	const [state, dispatch] = useReducer(reducer, {
+		loading: false,
 		favorites: [],
 		flashes: []
 	});
@@ -97,10 +121,22 @@ function App({ currentUser }) {
 				<Flash open={state.flashes.length > 0} onClose={handleFlashClose}>
 					{state.flashes[0]}
 				</Flash>
+
+				<div
+					className={classes.progress}
+					style={{
+						display: state.loading ? 'flex' : 'none'
+					}}>
+					<div className={classes.innerProgress}>
+						<CircularProgress />
+						<Typography variant='body1'>Loading</Typography>
+					</div>
+				</div>
+
 				<Paper>
 					<Switch>
 						<Route path='/discover'>
-							<DiscoverPage />
+							<DiscoverPage dispatch={dispatch} />
 						</Route>
 						<ProtectedRoute
 							path='/favorites'
@@ -118,13 +154,13 @@ function App({ currentUser }) {
 							path='/login'
 							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
-							<LoginPage redirectTo={HOME_PATH} />
+							<LoginPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/register'
 							redirect={<Redirect to='/login' />}
 							authorized={!currentUser}>
-							<RegisterPage redirectTo={HOME_PATH} />
+							<RegisterPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
 							{({ match }) => {

@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import UserForm from './UserForm';
 
+import useApp from '../../actions/app';
 import { createUser } from '../../lib/user';
 
 const useStyles = makeStyles(theme => ({
@@ -19,21 +20,24 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Register({ redirectTo }) {
+function Register({ dispatch, redirectTo }) {
 	const classes = useStyles();
 	const [error, setError] = useState();
 	const history = useHistory();
 
+	const { setLoading } = useApp(dispatch);
+
 	const handleSubmit = data => {
+		setLoading(true);
+
 		createUser(data)
-			.then(() => {
+			.then(() =>
 				history.push({
 					pathname: redirectTo
-				});
-			})
-			.catch(err => {
-				setError(err.message);
-			});
+				})
+			)
+			.catch(err => setError(err.message))
+			.finally(() => setLoading(false));
 	};
 
 	return (

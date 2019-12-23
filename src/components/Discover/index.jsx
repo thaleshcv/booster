@@ -9,14 +9,15 @@ import MovieList from '../Movies/MovieList';
 import MovieListItem from '../Movies/MovieListItem';
 import Pagination from '../Pagination';
 
+import useApp from '../../actions/app';
 import { getMovies, searchMovies } from '../../lib/tmdb';
 
 function fetchMovies(query, page) {
 	return query ? searchMovies({ query, page }) : getMovies({ page });
 }
 
-function Discover() {
-	let timeoutId;
+function Discover({ dispatch }) {
+	const { setLoading } = useApp(dispatch);
 
 	const history = useHistory();
 	const { location } = history;
@@ -28,12 +29,14 @@ function Discover() {
 	});
 
 	useEffect(() => {
-		const search = new URLSearchParams(location.search);
+		setLoading(true);
 
+		const search = new URLSearchParams(location.search);
 		fetchMovies(search.get('query'), search.get('page'))
 			.then(movies => setMovies(movies))
-			.then(() => window.scrollTo(0, 0));
-	}, [location.search]);
+			.then(() => window.scrollTo(0, 0))
+			.then(() => setLoading(false));
+	}, [location.search, setLoading]);
 
 	const handlePagination = page => {
 		const search = new URLSearchParams(location.search);
@@ -45,6 +48,7 @@ function Discover() {
 		});
 	};
 
+	let timeoutId;
 	const handleSearchChange = ({ target }) => {
 		if (timeoutId) {
 			clearTimeout(timeoutId);

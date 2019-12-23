@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -20,8 +19,9 @@ import {
 	setFavoriteWatched
 } from '../../lib/favorites';
 
-import useFavorites from '../../actions/favorites';
+import useApp from '../../actions/app';
 import useFlash from '../../actions/flash';
+import useFavorites from '../../actions/favorites';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -65,13 +65,12 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
-	const [loading, setLoading] = useState(false);
 
+	const { setLoading } = useApp(dispatch);
+	const { addFlashMessage } = useFlash(dispatch);
 	const { addFavorites, updateFavorite, removeFavorite } = useFavorites(
 		dispatch
 	);
-
-	const { addFlashMessage } = useFlash(dispatch);
 
 	useEffect(() => {
 		setLoading(true);
@@ -83,7 +82,7 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [movieId]);
+	}, [movieId, setLoading]);
 
 	const handleWatch = () => {
 		const newWatchedValue = !watched;
@@ -112,14 +111,6 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 				.then(() => addFlashMessage('Movie added to favorites'));
 		}
 	};
-
-	if (loading) {
-		return (
-			<div className={classes.progress}>
-				<CircularProgress />
-			</div>
-		);
-	}
 
 	if (!movie) {
 		return null;

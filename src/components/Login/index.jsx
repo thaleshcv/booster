@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import LoginForm from './LoginForm';
 import { authenticate } from '../../lib/auth';
+import useApp from '../../actions/app';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -18,21 +19,24 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function Login({ redirectTo }) {
+function Login({ dispatch, redirectTo }) {
 	const classes = useStyles();
 	const [error, setError] = useState();
 	const history = useHistory();
 
+	const { setLoading } = useApp(dispatch);
+
 	const handleSubmit = data => {
+		setLoading(true);
+
 		return authenticate(data.email, data.password)
-			.then(() => {
+			.then(() =>
 				history.push({
 					pathname: redirectTo
-				});
-			})
-			.catch(err => {
-				setError(err.message);
-			});
+				})
+			)
+			.catch(err => setError(err.message))
+			.finally(() => setLoading(false));
 	};
 
 	return (

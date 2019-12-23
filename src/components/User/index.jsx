@@ -12,9 +12,8 @@ import { resetPassword } from '../../lib/auth';
 import { deleteUser, updateProfile, reauthenticate } from '../../lib/user';
 import { uploadFile, deleteFile } from '../../lib/storage';
 
-import { actions } from '../../reducer';
-import useFlash from '../../actions/flash';
 import useApp from '../../actions/app';
+import useFlash from '../../actions/flash';
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
-	const { resetData } = useApp(dispatch);
+	const { setLoading, resetData } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
 	const [avatarFile, setAvatarFile] = useState(null);
 	const [dialogError, setDialogError] = useState();
@@ -51,9 +50,12 @@ function Account({ dispatch, currentUser }) {
 	const handleDeleteAccount = password => {
 		return reauthenticate(currentUser.email, password)
 			.then(() => {
+				setLoading(true);
+
 				deleteUser()
 					.then(() => resetData())
-					.catch(err => addFlashMessage(err.message));
+					.catch(err => addFlashMessage(err.message))
+					.finally(() => setLoading(false));
 			})
 			.catch(err => setDialogError(err.message));
 	};
@@ -105,8 +107,10 @@ function Account({ dispatch, currentUser }) {
 	const handleSubmitProfile = evt => {
 		evt.preventDefault();
 
+		setLoading(true);
+
 		if (!avatarFile) {
-			sendProfile(profile);
+			sendProfile(profile).finally(() => setLoading(false));
 			return;
 		}
 
@@ -118,7 +122,7 @@ function Account({ dispatch, currentUser }) {
 				sendProfile({
 					...profile,
 					photoURL
-				})
+				}).finally(() => setLoading(false))
 			);
 	};
 

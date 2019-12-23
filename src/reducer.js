@@ -1,4 +1,5 @@
 export const actions = {
+	SET_LOADING: 'SET_LOADING',
 	RESET_DATA: 'RESET_DATA',
 	ADD_FAVORITES: 'ADD_FAVORITES',
 	REMOVE_FAVORITE: 'REMOVE_FAVORITE',
@@ -7,13 +8,22 @@ export const actions = {
 	SHIFT_FLASH_MESSAGE: 'SHIFT_FLASH_MESSAGE'
 };
 
+const initialState = {
+	loading: false,
+	favorites: [],
+	flashes: []
+};
+
 function reducer(state, action) {
 	switch (action.type) {
-		case actions.RESET_DATA: {
+		case actions.SET_LOADING: {
 			return {
-				favorites: [],
-				flashes: []
+				...state,
+				loading: action.payload
 			};
+		}
+		case actions.RESET_DATA: {
+			return initialState;
 		}
 		case actions.ADD_FAVORITES: {
 			return {
