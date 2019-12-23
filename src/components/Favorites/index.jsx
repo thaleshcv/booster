@@ -70,6 +70,13 @@ function Favorites({ dispatch, favorites }) {
 					</FormGroup>
 				</Grid>
 			</Grid>
+
+			{!favoritesList.length && (
+				<Typography align='center' variant='body1'>
+					Your favorites list is empty
+				</Typography>
+			)}
+
 			<FavoriteList>
 				{favoritesList.map(favorite => (
 					<FavoriteListItem
