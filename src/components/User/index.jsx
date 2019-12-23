@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -6,23 +6,15 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-// dialog imports
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { red } from '@material-ui/core/colors';
-// end of dialog imports
-
+import ConfirmPasswordDialog from './ConfirmPasswordDialog';
 import UserAvatar from './UserAvatar';
-
 import { resetPassword } from '../../lib/auth';
 import { deleteUser, updateProfile, reauthenticate } from '../../lib/user';
 import { uploadFile, deleteFile } from '../../lib/storage';
 
 import { actions } from '../../reducer';
 import useFlash from '../../actions/flash';
+import useApp from '../../actions/app';
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -39,53 +31,12 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const useDialogStyles = makeStyles(theme => ({
-	text: {
-		padding: theme.spacing(1),
-		color: red[500]
-	}
-}));
-
-function ConfirmPasswordDialog({ open, onClose, onProceed }) {
-	const classes = useDialogStyles();
-	const inputRef = useRef();
-
-	return (
-		<Dialog open={open} onClose={onClose} aria-labelledby='form-dialog-title'>
-			<DialogTitle id='form-dialog-title'>Password confirmation</DialogTitle>
-			<DialogContent>
-				<DialogContentText className={classes.text}>
-					This action will delete your account and cannot be undone. Please,
-					confirm your password to proceed.
-				</DialogContentText>
-				<TextField
-					id='password'
-					margin='dense'
-					label='Password'
-					type='password'
-					inputRef={inputRef}
-					fullWidth
-					autoFocus
-				/>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={onClose} color='primary'>
-					Cancel
-				</Button>
-				<Button
-					onClick={() => onProceed(inputRef.current.value)}
-					color='secondary'>
-					Proceed
-				</Button>
-			</DialogActions>
-		</Dialog>
-	);
-}
-
 function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
+	const { resetData } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
 	const [avatarFile, setAvatarFile] = useState(null);
+	const [dialogError, setDialogError] = useState();
 	const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
 	const [profile, setProfile] = useState({
@@ -101,14 +52,10 @@ function Account({ dispatch, currentUser }) {
 		return reauthenticate(currentUser.email, password)
 			.then(() => {
 				deleteUser()
-					.then(() => {
-						dispatch({
-							type: actions.RESET_DATA
-						});
-					})
+					.then(() => resetData())
 					.catch(err => addFlashMessage(err.message));
 			})
-			.catch(err => addFlashMessage(err.message));
+			.catch(err => setDialogError(err.message));
 	};
 
 	const handleResetPassword = () => {
@@ -180,7 +127,7 @@ function Account({ dispatch, currentUser }) {
 	};
 
 	const sendProfile = profile => {
-		// using location.reload() to force reload the updated user
+		// using location.reload() as workaround to force reload the updated user
 		return updateProfile(profile)
 			.then(() => window.location.reload())
 			.catch(() => addFlashMessage('Error updating profile.'));
@@ -189,6 +136,9 @@ function Account({ dispatch, currentUser }) {
 	return (
 		<Container className={classes.container} maxWidth='md'>
 			<ConfirmPasswordDialog
+				error={dialogError}
+				text='This action will delete your account and cannot be undone. Please,
+				confirm your password to proceed.'
 				open={passwordDialogOpen}
 				onClose={() => setPasswordDialogOpen(false)}
 				onProceed={handleDeleteAccount}
@@ -196,14 +146,14 @@ function Account({ dispatch, currentUser }) {
 			<Typography variant='h2' gutterBottom>
 				Account
 			</Typography>
-			<Typography variant='body1'>{currentUser.email}</Typography>
-			<Grid alignItems='center' container>
+			<Grid justify='space-between' alignItems='center' container>
+				<Grid item>
+					<Typography variant='body1'>{currentUser.email}</Typography>
+				</Grid>
 				<Grid item>
 					<Button onClick={handleOpenPasswordDialog} color='secondary'>
 						Delete account
 					</Button>
-				</Grid>
-				<Grid item>
 					<Button onClick={handleResetPassword}>Reset password</Button>
 				</Grid>
 			</Grid>
@@ -235,6 +185,11 @@ function Account({ dispatch, currentUser }) {
 								Set avatar
 							</Button>
 						</label>
+						{avatarFile && (
+							<Typography variant='caption'>
+								[ {avatarFile.name}, {avatarFile.size / 1000}Kb ]
+							</Typography>
+						)}
 						{currentUser.photoURL && (
 							<Button onClick={handleClearAvatar} size='small'>
 								Remove avatar
