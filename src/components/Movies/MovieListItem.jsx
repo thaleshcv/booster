@@ -37,23 +37,23 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-function MovieListItem({ movie }) {
+function MovieListItem({ movieId, title, posterPath, actions }) {
 	const classes = useStyles();
 
 	return (
 		<Card className={classes.card}>
 			<CardMedia
 				className={classes.media}
-				title={movie.title}
-				image={getPosterUrl(movie.poster_path, 185)}
+				title={title}
+				image={getPosterUrl(posterPath, 185)}
 			/>
 			<CardContent className={classes.content}>
-				<Link component={RouterLink} to={`/movies/${movie.id}/${movie.title}`}>
+				<Link component={RouterLink} to={`/movies/${movieId}/${title}`}>
 					<Typography className={classes.title} variant='body1'>
-						{movie.title}
+						{title}
 					</Typography>
 				</Link>
-				<CardActions className={classes.controls}></CardActions>
+				<CardActions className={classes.controls}>{actions}</CardActions>
 			</CardContent>
 		</Card>
 	);

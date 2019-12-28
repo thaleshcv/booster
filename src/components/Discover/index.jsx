@@ -74,8 +74,13 @@ function Discover({ dispatch }) {
 			) : (
 				<Fragment>
 					<MovieList>
-						{movies.results.map(m => (
-							<MovieListItem key={m.id} movie={m} />
+						{movies.results.map(({ id, title, poster_path }) => (
+							<MovieListItem
+								key={id}
+								movieId={id}
+								title={title}
+								posterPath={poster_path}
+							/>
 						))}
 					</MovieList>
 					<Pagination

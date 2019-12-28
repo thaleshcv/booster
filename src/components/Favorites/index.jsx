@@ -1,13 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Fragment } from 'react';
 import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DoneIcon from '@material-ui/icons/Done';
+import TimerIcon from '@material-ui/icons/AccessTime';
 
-import FavoriteList from './FavoriteList';
-import FavoriteListItem from './FavoriteListItem';
+import MovieList from '../Movies/MovieList';
+import MovieListItem from '../Movies/MovieListItem';
 import { deleteFavorite, setFavoriteWatched } from '../../lib/favorites';
 import useFavorites from '../../actions/favorites';
 
@@ -77,16 +81,41 @@ function Favorites({ dispatch, favorites }) {
 				</Typography>
 			)}
 
-			<FavoriteList>
-				{favoritesList.map(favorite => (
-					<FavoriteListItem
-						key={favorite.id}
-						onDelete={handleDeleteFavorite}
-						onWatched={handleToggleWatched}
-						{...favorite}
+			<MovieList>
+				{favoritesList.map(({ id, movieId, title, watched, posterPath }) => (
+					<MovieListItem
+						key={id}
+						movieId={movieId}
+						title={title}
+						posterPath={posterPath}
+						actions={
+							<Fragment>
+								<IconButton
+									color='secondary'
+									title='Remove from favorites'
+									onClick={() => handleDeleteFavorite(id)}>
+									<DeleteIcon />
+								</IconButton>
+								{watched ? (
+									<IconButton
+										size='small'
+										title='Mark as not watched'
+										onClick={() => handleToggleWatched(id, !watched)}>
+										<DoneIcon />
+									</IconButton>
+								) : (
+									<IconButton
+										size='small'
+										title='Mark as watched'
+										onClick={() => handleToggleWatched(id, !watched)}>
+										<TimerIcon />
+									</IconButton>
+								)}
+							</Fragment>
+						}
 					/>
 				))}
-			</FavoriteList>
+			</MovieList>
 		</Container>
 	);
 }
