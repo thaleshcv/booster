@@ -2,42 +2,44 @@ import React, { useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import CloseIcon from '@material-ui/icons/Close';
+import EnterIcon from '@material-ui/icons/KeyboardReturn';
+import { makeStyles } from '@material-ui/core/styles';
 
-function SearchInput({ inputProps, value, onChange, onClear, ...props }) {
+const useStyles = makeStyles({
+	form: {
+		display: 'inline-block'
+	}
+});
+
+function SearchInput({ value, onSubmit }) {
+	const classes = useStyles();
 	const [inputValue, setInputValue] = useState(value || '');
-
-	const handleClear = () => {
-		setInputValue('');
-		if (onClear) {
-			onClear();
-		}
-	};
 
 	const handleInputChange = evt => {
 		setInputValue(evt.target.value);
-		if (onChange) {
-			onChange(evt);
-		}
+	};
+
+	const handleSubmit = evt => {
+		evt.preventDefault();
+		onSubmit(inputValue);
 	};
 
 	return (
-		<Input
-			id='search-input'
-			value={inputValue}
-			onChange={handleInputChange}
-			placeholder='Search movies here...'
-			{...props}
-			endAdornment={
-				inputValue && (
+		<form onSubmit={handleSubmit} className={classes.form}>
+			<Input
+				id='search-input'
+				value={inputValue}
+				onChange={handleInputChange}
+				placeholder='Search movies here...'
+				endAdornment={
 					<InputAdornment position='end'>
-						<IconButton onClick={handleClear}>
-							<CloseIcon />
+						<IconButton type='submit'>
+							<EnterIcon />
 						</IconButton>
 					</InputAdornment>
-				)
-			}
-		/>
+				}
+			/>
+		</form>
 	);
 }
 

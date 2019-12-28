@@ -48,27 +48,10 @@ function Discover({ dispatch }) {
 		});
 	};
 
-	let timeoutId;
-	const handleSearchChange = ({ target }) => {
-		if (timeoutId) {
-			clearTimeout(timeoutId);
-		}
-
-		timeoutId = setTimeout(function() {
-			history.push({
-				pathname: '/discover',
-				search: `query=${target.value}`
-			});
-		}, 500);
-	};
-
-	const handleSearchClear = () => {
-		if (timeoutId) {
-			clearTimeout(timeoutId);
-		}
-
+	const handleSearchChange = value => {
 		history.push({
-			pathname: '/discover'
+			pathname: '/discover',
+			search: `query=${value}`
 		});
 	};
 
@@ -81,10 +64,7 @@ function Discover({ dispatch }) {
 					</Typography>
 				</Grid>
 				<Grid item>
-					<SearchInput
-						onChange={handleSearchChange}
-						onClear={handleSearchClear}
-					/>
+					<SearchInput onSubmit={handleSearchChange} />
 				</Grid>
 			</Grid>
 			{movies.results.length === 0 ? (
