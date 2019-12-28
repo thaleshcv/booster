@@ -27,6 +27,11 @@ const useStyles = makeStyles(theme => ({
 	},
 	avatarInput: {
 		display: 'none'
+	},
+	form: {
+		margin: theme.spacing(2, 0),
+		width: '100%',
+		maxWidth: '660px'
 	}
 }));
 
@@ -34,7 +39,6 @@ function Account({ dispatch, currentUser }) {
 	const classes = useStyles();
 	const { setLoading, resetData } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
-	const [avatarFile, setAvatarFile] = useState(null);
 	const [dialogError, setDialogError] = useState();
 	const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
@@ -83,25 +87,31 @@ function Account({ dispatch, currentUser }) {
 		if (!file.type.match(/image\/(jpeg|png)/)) {
 			evt.target.value = null;
 
-			setAvatarFile(null);
 			addFlashMessage('File type not supported.');
-
 			return;
 		}
 
-		setAvatarFile(file);
+		setLoading(true);
+
+		uploadAvatar(file).then(photoURL =>
+			sendProfile({
+				...profile,
+				photoURL
+			}).finally(() => setLoading(false))
+		);
 	};
 
 	const handleClearAvatar = () => {
+		setLoading(true);
+
 		deleteFile(`avatars/${currentUser.uid}`)
 			.then(() =>
 				sendProfile({
 					photoURL: null
 				})
 			)
-			.catch(() => {
-				addFlashMessage('Error deleting avatar.');
-			});
+			.catch(() => addFlashMessage('Error deleting avatar.'))
+			.finally(() => setLoading(false));
 	};
 
 	const handleSubmitProfile = evt => {
@@ -109,25 +119,15 @@ function Account({ dispatch, currentUser }) {
 
 		setLoading(true);
 
-		if (!avatarFile) {
-			sendProfile(profile).finally(() => setLoading(false));
-			return;
-		}
-
-		uploadAvatar(avatarFile)
-			.then(snapshot =>
-				snapshot.ref.getDownloadURL().then(downloadURL => downloadURL)
-			)
-			.then(photoURL =>
-				sendProfile({
-					...profile,
-					photoURL
-				}).finally(() => setLoading(false))
-			);
+		sendProfile(profile).finally(() => setLoading(false));
 	};
 
 	const uploadAvatar = file => {
-		return uploadFile(file, { path: `avatars/${currentUser.uid}` });
+		return uploadFile(file, {
+			path: `avatars/${currentUser.uid}`
+		}).then(snapshot =>
+			snapshot.ref.getDownloadURL().then(downloadURL => downloadURL)
+		);
 	};
 
 	const sendProfile = profile => {
@@ -147,60 +147,58 @@ function Account({ dispatch, currentUser }) {
 				onClose={() => setPasswordDialogOpen(false)}
 				onProceed={handleDeleteAccount}
 			/>
-			<Typography variant='h2' gutterBottom>
-				Account
-			</Typography>
 			<Grid justify='space-between' alignItems='center' container>
 				<Grid item>
-					<Typography variant='body1'>{currentUser.email}</Typography>
+					<Typography variant='h2' gutterBottom>
+						My Account
+					</Typography>
 				</Grid>
 				<Grid item>
+					<Typography align='right' variant='body1'>
+						{currentUser.email}
+					</Typography>
 					<Button onClick={handleOpenPasswordDialog} color='secondary'>
 						Delete account
 					</Button>
 					<Button onClick={handleResetPassword}>Reset password</Button>
 				</Grid>
 			</Grid>
-			<form className={classes.spacer} onSubmit={handleSubmitProfile}>
-				<Grid
-					alignItems='center'
-					spacing={1}
-					className={classes.spacer}
-					container>
-					<Grid item>
-						<UserAvatar
-							src={currentUser.photoURL}
-							name={currentUser.displayName}
-							email={currentUser.email}
-						/>
-					</Grid>
-					<Grid item>
-						<input
-							id='avatar_input'
-							type='file'
-							multiple={false}
-							accept='image/*'
-							name='avatarFile'
-							className={classes.avatarInput}
-							onChange={handleFileFieldChange}
-						/>
-						<label htmlFor='avatar_input'>
-							<Button component='span' size='small'>
-								Set avatar
-							</Button>
-						</label>
-						{avatarFile && (
-							<Typography variant='caption'>
-								[ {avatarFile.name}, {avatarFile.size / 1000}Kb ]
-							</Typography>
-						)}
-						{currentUser.photoURL && (
-							<Button onClick={handleClearAvatar} size='small'>
-								Remove avatar
-							</Button>
-						)}
-					</Grid>
+			<Grid
+				alignItems='center'
+				spacing={1}
+				className={classes.spacer}
+				container>
+				<Grid item>
+					<UserAvatar
+						src={currentUser.photoURL}
+						name={currentUser.displayName}
+						email={currentUser.email}
+					/>
 				</Grid>
+				<Grid item>
+					<input
+						id='avatar_input'
+						type='file'
+						multiple={false}
+						accept='image/*'
+						name='avatarFile'
+						className={classes.avatarInput}
+						onChange={handleFileFieldChange}
+					/>
+					<label htmlFor='avatar_input'>
+						<Button component='span' size='small'>
+							Set avatar
+						</Button>
+					</label>
+					{currentUser.photoURL && (
+						<Button onClick={handleClearAvatar} size='small'>
+							Remove avatar
+						</Button>
+					)}
+				</Grid>
+			</Grid>
+			<form className={classes.form} onSubmit={handleSubmitProfile}>
+				<Typography variant='h6'>Profile</Typography>
 				<TextField
 					id='account_name'
 					label='Display Name'
