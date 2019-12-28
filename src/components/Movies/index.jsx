@@ -10,7 +10,6 @@ import WatchedIcon from '@material-ui/icons/Done';
 import WatchedBorderIcon from '@material-ui/icons/DoneOutline';
 
 import MovieGenres from './MovieGenres';
-import VoteAverage from './VoteAverage';
 
 import { getPosterUrl, getMovie } from '../../lib/tmdb';
 import {
@@ -27,8 +26,8 @@ const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex'
 	},
-	genres: {
-		margin: theme.spacing(1, 0)
+	spacer: {
+		margin: theme.spacing(2, 0)
 	},
 	poster: {
 		minWidth: 342,
@@ -36,13 +35,6 @@ const useStyles = makeStyles(theme => ({
 	},
 	right: {
 		padding: theme.spacing(0, 1)
-	},
-	title: {
-		flex: 1,
-		paddingTop: theme.spacing(1),
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between'
 	},
 	progress: {
 		minHeight: 400,
@@ -129,20 +121,13 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 					alt='Poster'
 				/>
 				<div className={classes.right}>
-					<Typography
-						className={classes.title}
-						variant='h2'
-						color='textPrimary'>
-						{movie.title}
-						<VoteAverage value={movie.vote_average} />
-					</Typography>
 					<Grid
+						className={classes.spacer}
 						alignItems='center'
-						className={classes.genres}
 						spacing={1}
 						container>
 						<Grid style={{ flex: 1 }} item>
-							<MovieGenres genres={movie.genres} />
+							<Typography variant='h2'>{movie.title}</Typography>
 						</Grid>
 						<Grid item>
 							<IconButton
@@ -152,13 +137,12 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 								onClick={handleFavorite}>
 								<FavIcon className={classes.favoriteIcon} />
 							</IconButton>
-							{favoriteId && (
-								<IconButton
-									title={`Set movie as${watched ? ' not ' : ' '}watched`}
-									onClick={handleWatch}>
-									<WatchIcon className={classes.watchIcon} />
-								</IconButton>
-							)}
+							<IconButton
+								disabled={!favoriteId}
+								title={`Set movie as${watched ? ' not ' : ' '}watched`}
+								onClick={handleWatch}>
+								<WatchIcon className={classes.watchIcon} />
+							</IconButton>
 						</Grid>
 					</Grid>
 					<Typography variant='body1' color='textSecondary' paragraph>
@@ -168,7 +152,11 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 						{movie.overview}
 					</Typography>
 
-					<Grid container>
+					<div className={classes.spacer}>
+						<MovieGenres genres={movie.genres} />
+					</div>
+
+					<Grid spacing={2} container>
 						<Grid xs={12} md={4} item>
 							<Typography color='textSecondary' variant='body2'>
 								Released: {movie.release_date}
@@ -180,7 +168,7 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>
-							<Typography align='right' color='textSecondary' variant='body2'>
+							<Typography color='textSecondary' variant='body2'>
 								Runtime: {movie.runtime} minutes
 							</Typography>
 						</Grid>
