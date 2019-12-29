@@ -3,11 +3,9 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { red, green } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import WatchedIcon from '@material-ui/icons/Done';
-import WatchedBorderIcon from '@material-ui/icons/DoneOutline';
+import { blue, grey } from '@material-ui/core/colors';
+import FavoriteIcon from '@material-ui/icons/FavoriteBorder';
+import WatchedIcon from '@material-ui/icons/DoneOutline';
 
 import MovieGenres from './MovieGenres';
 
@@ -42,16 +40,34 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center'
-	},
-	favoriteIcon: {
-		fontSize: '1.5em',
-		color: red['500']
-	},
-	watchIcon: {
-		fontSize: '1.5em',
-		color: green['500']
 	}
 }));
+
+const useActionStyles = makeStyles(theme => ({
+	actionBtn: {
+		margin: theme.spacing(0, 1),
+		backgroundColor: grey['200'],
+		'&.active': {
+			color: theme.palette.common.white,
+			backgroundColor: blue['700']
+		}
+	}
+}));
+
+function ActionBtn({ Icon, active, ...props }) {
+	const classes = useActionStyles();
+
+	const classNames = [classes.actionBtn];
+	if (active) {
+		classNames.push('active');
+	}
+
+	return (
+		<IconButton {...props} className={classNames.join(' ')}>
+			<Icon />
+		</IconButton>
+	);
+}
 
 function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
@@ -108,9 +124,6 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 		return null;
 	}
 
-	const FavIcon = favoriteId ? FavoriteIcon : FavoriteBorderIcon;
-	const WatchIcon = watched ? WatchedIcon : WatchedBorderIcon;
-
 	return (
 		<Fragment>
 			<div className={classes.root}>
@@ -130,19 +143,19 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 							<Typography variant='h2'>{movie.title}</Typography>
 						</Grid>
 						<Grid item>
-							<IconButton
-								title={
-									favoriteId ? 'Remove from favorites' : 'Add to favorites'
-								}
-								onClick={handleFavorite}>
-								<FavIcon className={classes.favoriteIcon} />
-							</IconButton>
-							<IconButton
+							<ActionBtn
+								title={`${favoriteId ? 'Remove from' : 'Add to'} favorites`}
+								Icon={FavoriteIcon}
+								active={Boolean(favoriteId)}
+								onClick={handleFavorite}
+							/>
+							<ActionBtn
+								title={`Set as${watched ? ' not ' : ' '}watched`}
+								Icon={WatchedIcon}
 								disabled={!favoriteId}
-								title={`Set movie as${watched ? ' not ' : ' '}watched`}
-								onClick={handleWatch}>
-								<WatchIcon className={classes.watchIcon} />
-							</IconButton>
+								active={watched}
+								onClick={handleWatch}
+							/>
 						</Grid>
 					</Grid>
 					<Typography variant='body1' color='textSecondary' paragraph>
