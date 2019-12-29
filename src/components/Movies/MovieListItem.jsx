@@ -26,11 +26,11 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: '0 !important'
+		paddingBottom: '8px !important'
 	},
 	controls: {
 		display: 'flex',
-		justifyContent: 'center',
+		justifyContent: 'space-around',
 		width: '100%',
 		padding: 0,
 		margin: 0

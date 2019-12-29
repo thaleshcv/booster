@@ -150,7 +150,7 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 								onClick={handleFavorite}
 							/>
 							<ActionBtn
-								title={`Set as${watched ? ' not ' : ' '}watched`}
+								title={`Movie${watched ? ' ' : ' not '}watched`}
 								Icon={WatchedIcon}
 								disabled={!favoriteId}
 								active={watched}

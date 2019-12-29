@@ -3,10 +3,13 @@ import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
+import WatchedIcon from '@material-ui/icons/DoneOutline';
+import { makeStyles } from '@material-ui/core/styles';
+import { blue } from '@material-ui/core/colors';
 
 import MovieList from '../Movies/MovieList';
 import MovieListItem from '../Movies/MovieListItem';
@@ -21,7 +24,15 @@ function applyFilterOnFavorites(favorites, filter) {
 	return favorites;
 }
 
+const useStyles = makeStyles(theme => ({
+	activeAction: {
+		color: theme.palette.common.white,
+		backgroundColor: blue['700']
+	}
+}));
+
 function Favorites({ dispatch, favorites }) {
+	const classes = useStyles();
 	const [hideWatched, setHideWatched] = useState(false);
 	const { updateFavorite, removeFavorite } = useFavorites(dispatch);
 
@@ -87,13 +98,21 @@ function Favorites({ dispatch, favorites }) {
 						title={title}
 						posterPath={posterPath}
 						actions={
-							<Button
-								size='small'
-								title='Remove from favorites'
-								onClick={() => handleDeleteFavorite(id)}
-								startIcon={<DeleteIcon />}>
-								Remove
-							</Button>
+							<Fragment>
+								<IconButton
+									size='small'
+									title='Remove from favorites'
+									onClick={() => handleDeleteFavorite(id)}>
+									<DeleteIcon />
+								</IconButton>
+								<IconButton
+									size='small'
+									title={`Movie${watched ? ' ' : ' not '}watched`}
+									className={watched ? classes.activeAction : null}
+									onClick={() => handleToggleWatched(id, !watched)}>
+									<WatchedIcon />
+								</IconButton>
+							</Fragment>
 						}
 					/>
 				))}
