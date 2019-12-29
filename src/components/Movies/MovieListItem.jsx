@@ -25,12 +25,15 @@ const useStyles = makeStyles(theme => ({
 		flex: 1,
 		display: 'flex',
 		flexDirection: 'column',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		paddingBottom: '0 !important'
 	},
 	controls: {
 		display: 'flex',
 		justifyContent: 'center',
-		width: '100%'
+		width: '100%',
+		padding: 0,
+		margin: 0
 	},
 	title: {
 		fontWeight: theme.typography.fontWeightMedium

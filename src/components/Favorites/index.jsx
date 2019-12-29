@@ -3,12 +3,10 @@ import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
-import DoneIcon from '@material-ui/icons/Done';
-import TimerIcon from '@material-ui/icons/AccessTime';
 
 import MovieList from '../Movies/MovieList';
 import MovieListItem from '../Movies/MovieListItem';
@@ -89,29 +87,13 @@ function Favorites({ dispatch, favorites }) {
 						title={title}
 						posterPath={posterPath}
 						actions={
-							<Fragment>
-								<IconButton
-									color='secondary'
-									title='Remove from favorites'
-									onClick={() => handleDeleteFavorite(id)}>
-									<DeleteIcon />
-								</IconButton>
-								{watched ? (
-									<IconButton
-										size='small'
-										title='Mark as not watched'
-										onClick={() => handleToggleWatched(id, !watched)}>
-										<DoneIcon />
-									</IconButton>
-								) : (
-									<IconButton
-										size='small'
-										title='Mark as watched'
-										onClick={() => handleToggleWatched(id, !watched)}>
-										<TimerIcon />
-									</IconButton>
-								)}
-							</Fragment>
+							<Button
+								size='small'
+								title='Remove from favorites'
+								onClick={() => handleDeleteFavorite(id)}
+								startIcon={<DeleteIcon />}>
+								Remove
+							</Button>
 						}
 					/>
 				))}
