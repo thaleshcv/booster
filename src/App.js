@@ -84,7 +84,7 @@ function App({ currentUser }) {
 					<Button component={RouterLink} to='/discover' color='inherit'>
 						Discover
 					</Button>
-					{currentUser ? (
+					{authenticated ? (
 						<Fragment>
 							<Button component={RouterLink} to='/favorites' color='inherit'>
 								Favorites
