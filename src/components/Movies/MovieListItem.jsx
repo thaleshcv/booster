@@ -26,14 +26,15 @@ const useStyles = makeStyles(theme => ({
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		paddingBottom: '8px !important'
+		paddingBottom: '0px !important'
 	},
 	controls: {
 		display: 'flex',
-		justifyContent: 'space-between',
+		justifyContent: 'space-around',
 		width: '100%',
 		padding: 0,
-		margin: 0
+		margin: 0,
+		backgroundColor: theme.palette.grey['300']
 	},
 	title: {
 		fontWeight: theme.typography.fontWeightMedium
