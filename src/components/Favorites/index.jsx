@@ -1,5 +1,6 @@
 import React, { useState, useMemo, Fragment } from 'react';
 import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
@@ -9,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import WatchedIcon from '@material-ui/icons/DoneOutline';
 import { makeStyles } from '@material-ui/core/styles';
-import { blue } from '@material-ui/core/colors';
+import { blue, grey } from '@material-ui/core/colors';
 
 import MovieList from '../Movies/MovieList';
 import MovieListItem from '../Movies/MovieListItem';
@@ -26,8 +27,7 @@ function applyFilterOnFavorites(favorites, filter) {
 
 const useStyles = makeStyles(theme => ({
 	activeAction: {
-		color: theme.palette.common.white,
-		backgroundColor: blue['700']
+		color: blue['700']
 	}
 }));
 
@@ -105,6 +105,7 @@ function Favorites({ dispatch, favorites }) {
 									onClick={() => handleDeleteFavorite(id)}>
 									<DeleteIcon />
 								</IconButton>
+								<Divider orientation='vertical' />
 								<IconButton
 									size='small'
 									title={`Movie${watched ? ' ' : ' not '}watched`}

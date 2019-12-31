@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	controls: {
 		display: 'flex',
-		justifyContent: 'space-around',
+		justifyContent: 'space-between',
 		width: '100%',
 		padding: 0,
 		margin: 0
