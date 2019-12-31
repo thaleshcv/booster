@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import WatchedIcon from '@material-ui/icons/DoneOutline';
 import { makeStyles } from '@material-ui/core/styles';
-import { blue, grey } from '@material-ui/core/colors';
+import { blue } from '@material-ui/core/colors';
 
 import MovieList from '../Movies/MovieList';
 import MovieListItem from '../Movies/MovieListItem';

@@ -69,7 +69,7 @@ function ActionBtn({ Icon, active, ...props }) {
 	);
 }
 
-function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
+function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
@@ -104,7 +104,7 @@ function Movies({ currentUser, dispatch, movieId, favoriteId, watched }) {
 	};
 
 	const handleFavorite = () => {
-		if (!currentUser) {
+		if (!authenticated) {
 			addFlashMessage('You have to log in first');
 			return;
 		}

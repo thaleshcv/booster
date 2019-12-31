@@ -47,6 +47,8 @@ const useStyles = makeStyles(theme => ({
 const HOME_PATH = '/discover';
 
 function App({ currentUser }) {
+	const authenticated = Boolean(currentUser);
+
 	const classes = useStyles();
 
 	const [state, dispatch] = useReducer(reducer, {
@@ -67,10 +69,10 @@ function App({ currentUser }) {
 		state.favorites.find(fav => String(fav.movieId) === movieId);
 
 	useEffect(() => {
-		if (currentUser) {
+		if (authenticated) {
 			getUserFavorites().then(favorites => addFavorites(favorites));
 		}
-	}, [addFavorites, currentUser]);
+	}, [addFavorites, authenticated]);
 
 	console.debug('App State', state);
 
@@ -100,7 +102,6 @@ function App({ currentUser }) {
 				<Flash open={state.flashes.length > 0} onClose={handleFlashClose}>
 					{state.flashes[0]}
 				</Flash>
-
 				<Paper>
 					<Switch>
 						<Route path='/discover'>
@@ -109,25 +110,25 @@ function App({ currentUser }) {
 						<ProtectedRoute
 							path='/favorites'
 							redirect={<Redirect to='/login' />}
-							authorized={Boolean(currentUser)}>
+							authorized={authenticated}>
 							<FavoritesPage dispatch={dispatch} favorites={state.favorites} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/account'
 							redirect={<Redirect to='/login' />}
-							authorized={Boolean(currentUser)}>
+							authorized={authenticated}>
 							<AccountPage dispatch={dispatch} currentUser={currentUser} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/login'
 							redirect={<Redirect to='/login' />}
-							authorized={!currentUser}>
+							authorized={authenticated}>
 							<LoginPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/register'
 							redirect={<Redirect to='/login' />}
-							authorized={!currentUser}>
+							authorized={authenticated}>
 							<RegisterPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
@@ -135,7 +136,7 @@ function App({ currentUser }) {
 								const movieFavorite = findMovieFavorite(match.params.movieId);
 								return (
 									<MoviesPage
-										currentUser={currentUser}
+										authenticated={authenticated}
 										movieId={match.params.movieId}
 										favoriteId={movieFavorite ? movieFavorite.id : null}
 										watched={movieFavorite ? movieFavorite.watched : false}
