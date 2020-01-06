@@ -9,6 +9,7 @@ import WatchedIcon from '@material-ui/icons/DoneOutline';
 
 import MovieCrew from './MovieCrew';
 import MovieGenres from './MovieGenres';
+import MovieCast from './MovieCast';
 
 import { getPosterUrl, getMovie } from '../../lib/tmdb';
 import {
@@ -202,6 +203,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					<Typography className={classes.spacer} variant='h4'>
 						Cast
 					</Typography>
+					<MovieCast cast={movie.credits.cast} />
 				</div>
 			</div>
 		</Fragment>

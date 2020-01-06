@@ -59,3 +59,13 @@ export function getMovie(movieId, params = {}) {
 export function getPosterUrl(path, size) {
 	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 500}/${path}`;
 }
+
+/**
+ * Build the URI for a profile image.
+ *
+ * @param {String} path Profile image path.
+ * @param {Number} size Profile size (one of 45, 185).
+ */
+export function getProfileUrl(path, size) {
+	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 45}/${path}`;
+}
