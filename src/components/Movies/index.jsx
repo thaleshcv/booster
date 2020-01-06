@@ -7,6 +7,7 @@ import { blue, grey } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/FavoriteBorder';
 import WatchedIcon from '@material-ui/icons/DoneOutline';
 
+import MovieCrew from './MovieCrew';
 import MovieGenres from './MovieGenres';
 
 import { getPosterUrl, getMovie } from '../../lib/tmdb';
@@ -83,7 +84,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	useEffect(() => {
 		setLoading(true);
 
-		getMovie(movieId)
+		getMovie(movieId, { append_to_response: 'videos,credits' })
 			.then(movie => {
 				setMovie(movie);
 			})
@@ -171,21 +172,36 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 
 					<Grid spacing={2} container>
 						<Grid xs={12} md={4} item>
+							<Typography color='textSecondary' variant='overline'>
+								Released
+							</Typography>
 							<Typography color='textSecondary' variant='body2'>
-								Released: {movie.release_date}
+								{movie.release_date}
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>
+							<Typography color='textSecondary' variant='overline'>
+								From
+							</Typography>
 							<Typography color='textSecondary' variant='body2'>
-								From: {movie.production_countries.map(c => c.name).join(', ')}
+								{movie.production_countries.map(c => c.name).join(', ')}
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>
+							<Typography color='textSecondary' variant='overline'>
+								Runtime
+							</Typography>
 							<Typography color='textSecondary' variant='body2'>
-								Runtime: {movie.runtime} minutes
+								{movie.runtime} minutes
 							</Typography>
 						</Grid>
 					</Grid>
+
+					<MovieCrew crew={movie.credits.crew} />
+
+					<Typography className={classes.spacer} variant='h4'>
+						Cast
+					</Typography>
 				</div>
 			</div>
 		</Fragment>

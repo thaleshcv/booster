@@ -48,6 +48,7 @@ const HOME_PATH = '/discover';
 
 function App({ currentUser }) {
 	const authenticated = Boolean(currentUser);
+	console.debug('authenticated', authenticated);
 
 	const classes = useStyles();
 
@@ -122,13 +123,13 @@ function App({ currentUser }) {
 						<ProtectedRoute
 							path='/login'
 							redirect={<Redirect to='/login' />}
-							authorized={authenticated}>
+							authorized={!authenticated}>
 							<LoginPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<ProtectedRoute
 							path='/register'
 							redirect={<Redirect to='/login' />}
-							authorized={authenticated}>
+							authorized={!authenticated}>
 							<RegisterPage dispatch={dispatch} redirectTo={HOME_PATH} />
 						</ProtectedRoute>
 						<Route path='/movies/:movieId'>
