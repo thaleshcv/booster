@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -7,7 +8,7 @@ import { blue, grey } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/FavoriteBorder';
 import WatchedIcon from '@material-ui/icons/DoneOutline';
 
-import MovieCrew from './MovieCrew';
+import MovieInfo from './MovieInfo';
 import MovieGenres from './MovieGenres';
 import MovieCast from './MovieCast';
 
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 		minWidth: 342,
 		height: 'auto'
 	},
-	right: {
+	content: {
 		padding: theme.spacing(0, 1)
 	},
 	progress: {
@@ -75,6 +76,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
+	const [fullCast, setFullCast] = useState(false);
 
 	const { setLoading } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
@@ -135,7 +137,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					title='Poster'
 					alt='Poster'
 				/>
-				<div className={classes.right}>
+				<div className={classes.content}>
 					<Grid
 						className={classes.spacer}
 						alignItems='center'
@@ -171,39 +173,26 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						<MovieGenres genres={movie.genres} />
 					</div>
 
-					<Grid spacing={2} container>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								Released
-							</Typography>
-							<Typography color='textSecondary' variant='body2'>
-								{movie.release_date}
-							</Typography>
-						</Grid>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								From
-							</Typography>
-							<Typography color='textSecondary' variant='body2'>
-								{movie.production_countries.map(c => c.name).join(', ')}
+					<MovieInfo
+						releaseDate={movie.release_date}
+						countries={movie.production_countries}
+						runtime={movie.runtime}
+						crew={movie.credits.crew}
+					/>
+
+					<Grid alignItems='baseline' spacing={1} container>
+						<Grid item>
+							<Typography className={classes.spacer} variant='h4'>
+								Cast
 							</Typography>
 						</Grid>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								Runtime
-							</Typography>
-							<Typography color='textSecondary' variant='body2'>
-								{movie.runtime} minutes
-							</Typography>
+						<Grid item>
+							<Button onClick={() => setFullCast(!fullCast)} size='small'>
+								{fullCast ? 'Show less' : 'Show more'}
+							</Button>
 						</Grid>
 					</Grid>
-
-					<MovieCrew crew={movie.credits.crew} />
-
-					<Typography className={classes.spacer} variant='h4'>
-						Cast
-					</Typography>
-					<MovieCast cast={movie.credits.cast} />
+					<MovieCast cast={movie.credits.cast} limit={fullCast ? 0 : 12} />
 				</div>
 			</div>
 		</Fragment>

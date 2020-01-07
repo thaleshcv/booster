@@ -1,60 +1,47 @@
 import React from 'react';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Avatar from '@material-ui/core/Avatar';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { getProfileUrl } from '../../lib/tmdb';
 
 const useStyles = makeStyles(theme => ({
-	root: {
-		display: 'flex',
-		flexWrap: 'wrap',
-		justifyContent: 'space-around',
-		overflow: 'hidden',
-		backgroundColor: theme.palette.background.paper
-	},
-	gridList: {
-		flexWrap: 'nowrap',
-		// Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-		transform: 'translateZ(0)'
-	},
-	title: {
-		color: theme.palette.primary.light
-	},
-	profile: {
-		width: '45px',
-		height: 'auto'
-	},
-	titleBar: {
-		background:
-			'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)'
+	root: {},
+	avatar: {
+		display: 'inline-block',
+		margin: theme.spacing(0, 1)
 	}
 }));
 
-function MovieCast({ cast }) {
+function MovieCast({ cast, limit }) {
 	const classes = useStyles();
+
+	const castList =
+		Number.isInteger(limit) && limit > 0 ? cast.slice(0, limit) : cast;
 
 	return (
 		<div className={classes.root}>
-			<GridList className={classes.gridList} cols={2.5}>
-				{cast.map(person => (
-					<GridListTile key={person.credit_id}>
-						<img
-							className={classes.profile}
-							src={getProfileUrl(person.profile_path, 45)}
-							alt={person.name}
-						/>
-						<GridListTileBar
-							title={person.name}
-							classes={{
-								root: classes.titleBar,
-								title: classes.title
-							}}
-						/>
-					</GridListTile>
-				))}
-			</GridList>
+			{castList.map(person => (
+				<Tooltip
+					placement='top'
+					key={person.cast_id}
+					title={
+						<Typography color='inherit'>
+							{person.name} as <i>{person.character}</i>
+						</Typography>
+					}>
+					<Avatar
+						className={classes.avatar}
+						src={getProfileUrl(person.profile_path, 45)}>
+						<img src='/assets/profile.png' alt={person.name} />
+					</Avatar>
+				</Tooltip>
+			))}
+
+			{castList.length < cast.length && (
+				<Avatar className={classes.avatar}>+{cast.length - limit}</Avatar>
+			)}
 		</div>
 	);
 }
