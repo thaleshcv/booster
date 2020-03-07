@@ -29,8 +29,10 @@ const useStyles = makeStyles(theme => ({
 		margin: theme.spacing(2, 0)
 	},
 	poster: {
-		minWidth: 342,
-		height: "auto"
+		"minWidth": 342,
+		"& > img": {
+			width: "100%"
+		}
 	},
 	content: {
 		padding: theme.spacing(0, 1)
@@ -74,7 +76,6 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
-	const [fullCast, setFullCast] = useState(false);
 
 	const { setLoading } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
@@ -129,12 +130,13 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	return (
 		<Fragment>
 			<div className={classes.root}>
-				<img
-					className={classes.poster}
-					src={getPosterUrl(movie.poster_path, 342)}
-					title='Poster'
-					alt='Poster'
-				/>
+				<div className={classes.poster}>
+					<img
+						src={getPosterUrl(movie.poster_path, 342)}
+						title='Poster'
+						alt='Poster'
+					/>
+				</div>
 				<div className={classes.content}>
 					<Grid
 						className={classes.spacer}
