@@ -1,56 +1,57 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import { blue, grey } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/FavoriteBorder';
-import WatchedIcon from '@material-ui/icons/DoneOutline';
+import React, { Fragment, useEffect, useState } from "react";
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import { blue, grey } from "@material-ui/core/colors";
+import FavoriteIcon from "@material-ui/icons/FavoriteBorder";
+import WatchedIcon from "@material-ui/icons/DoneOutline";
 
-import MovieCrew from './MovieCrew';
-import MovieGenres from './MovieGenres';
+import MovieCrew from "./MovieCrew";
+import MovieCast from "./MovieCast";
+import MovieGenres from "./MovieGenres";
 
-import { getPosterUrl, getMovie } from '../../lib/tmdb';
+import { getPosterUrl, getMovie } from "../../lib/tmdb";
 import {
 	createFavorite,
 	deleteFavorite,
 	setFavoriteWatched
-} from '../../lib/favorites';
+} from "../../lib/favorites";
 
-import useApp from '../../actions/app';
-import useFlash from '../../actions/flash';
-import useFavorites from '../../actions/favorites';
+import useApp from "../../actions/app";
+import useFlash from "../../actions/flash";
+import useFavorites from "../../actions/favorites";
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		display: 'flex'
+		display: "flex"
 	},
 	spacer: {
 		margin: theme.spacing(2, 0)
 	},
 	poster: {
 		minWidth: 342,
-		height: 'auto'
+		height: "auto"
 	},
 	right: {
 		padding: theme.spacing(0, 1)
 	},
 	progress: {
 		minHeight: 400,
-		height: '100%',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center'
+		height: "100%",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center"
 	}
 }));
 
 const useActionStyles = makeStyles(theme => ({
 	actionBtn: {
-		margin: theme.spacing(0, 1),
-		backgroundColor: grey['200'],
-		'&.active': {
+		"margin": theme.spacing(0, 1),
+		"backgroundColor": grey["200"],
+		"&.active": {
 			color: theme.palette.common.white,
-			backgroundColor: blue['700']
+			backgroundColor: blue["700"]
 		}
 	}
 }));
@@ -60,11 +61,11 @@ function ActionBtn({ Icon, active, ...props }) {
 
 	const classNames = [classes.actionBtn];
 	if (active) {
-		classNames.push('active');
+		classNames.push("active");
 	}
 
 	return (
-		<IconButton {...props} className={classNames.join(' ')}>
+		<IconButton {...props} className={classNames.join(" ")}>
 			<Icon />
 		</IconButton>
 	);
@@ -84,7 +85,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	useEffect(() => {
 		setLoading(true);
 
-		getMovie(movieId, { append_to_response: 'videos,credits' })
+		getMovie(movieId, { append_to_response: "videos,credits" })
 			.then(movie => {
 				setMovie(movie);
 			})
@@ -106,18 +107,18 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 
 	const handleFavorite = () => {
 		if (!authenticated) {
-			addFlashMessage('You have to log in first');
+			addFlashMessage("You have to log in first");
 			return;
 		}
 
 		if (favoriteId) {
 			deleteFavorite(favoriteId)
 				.then(() => removeFavorite(favoriteId))
-				.then(() => addFlashMessage('Movie removed from favorites'));
+				.then(() => addFlashMessage("Movie removed from favorites"));
 		} else {
 			createFavorite(movie)
 				.then(favorite => addFavorites(favorite))
-				.then(() => addFlashMessage('Movie added to favorites'));
+				.then(() => addFlashMessage("Movie added to favorites"));
 		}
 	};
 
@@ -145,13 +146,13 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						</Grid>
 						<Grid item>
 							<ActionBtn
-								title={`${favoriteId ? 'Remove from' : 'Add to'} favorites`}
+								title={`${favoriteId ? "Remove from" : "Add to"} favorites`}
 								Icon={FavoriteIcon}
 								active={Boolean(favoriteId)}
 								onClick={handleFavorite}
 							/>
 							<ActionBtn
-								title={`Movie${watched ? ' ' : ' not '}watched`}
+								title={`Movie${watched ? " " : " not "}watched`}
 								Icon={WatchedIcon}
 								disabled={!favoriteId}
 								active={watched}
@@ -175,7 +176,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 							<Typography color='textSecondary' variant='overline'>
 								Released
 							</Typography>
-							<Typography color='textSecondary' variant='body2'>
+							<Typography color='textPrimary' variant='body2'>
 								{movie.release_date}
 							</Typography>
 						</Grid>
@@ -183,15 +184,15 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 							<Typography color='textSecondary' variant='overline'>
 								From
 							</Typography>
-							<Typography color='textSecondary' variant='body2'>
-								{movie.production_countries.map(c => c.name).join(', ')}
+							<Typography color='textPrimary' variant='body2'>
+								{movie.production_countries.map(c => c.name).join(", ")}
 							</Typography>
 						</Grid>
 						<Grid xs={12} md={4} item>
 							<Typography color='textSecondary' variant='overline'>
 								Runtime
 							</Typography>
-							<Typography color='textSecondary' variant='body2'>
+							<Typography color='textPrimary' variant='body2'>
 								{movie.runtime} minutes
 							</Typography>
 						</Grid>
@@ -202,6 +203,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					<Typography className={classes.spacer} variant='h4'>
 						Cast
 					</Typography>
+					<MovieCast cast={movie.credits.cast} />
 				</div>
 			</div>
 		</Fragment>

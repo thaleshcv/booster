@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 // initializing TMDB client
 const client = axios.create({
@@ -9,7 +9,7 @@ const client = axios.create({
 });
 
 client.interceptors.response.use(function(response) {
-	return response['data'];
+	return response["data"];
 });
 
 /**
@@ -18,7 +18,7 @@ client.interceptors.response.use(function(response) {
  * @param {Object} params
  */
 export function getMovies(params = {}) {
-	return client.get('/discover/movie', {
+	return client.get("/discover/movie", {
 		params: {
 			...params,
 			include_adult: false
@@ -32,7 +32,7 @@ export function getMovies(params = {}) {
  * @param {Object} params
  */
 export function searchMovies(params = {}) {
-	return client.get('/search/movie', {
+	return client.get("/search/movie", {
 		params: {
 			...params,
 			include_adult: false
@@ -58,4 +58,14 @@ export function getMovie(movieId, params = {}) {
  */
 export function getPosterUrl(path, size) {
 	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 500}/${path}`;
+}
+
+/**
+ * Build the URI for a profile image.
+ *
+ * @param {String} path Profile image path.
+ * @param {Number} size Profile size (one of 45, 185).
+ */
+export function getProfileUrl(path, size) {
+	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 45}/${path}`;
 }
