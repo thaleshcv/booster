@@ -7,7 +7,6 @@ import { blue, grey } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/FavoriteBorder";
 import WatchedIcon from "@material-ui/icons/DoneOutline";
 
-import MovieCrew from "./MovieCrew";
 import MovieCast from "./MovieCast";
 import MovieGenres from "./MovieGenres";
 
@@ -33,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 		minWidth: 342,
 		height: "auto"
 	},
-	right: {
+	content: {
 		padding: theme.spacing(0, 1)
 	},
 	progress: {
@@ -75,6 +74,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
+	const [fullCast, setFullCast] = useState(false);
 
 	const { setLoading } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
@@ -135,7 +135,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					title='Poster'
 					alt='Poster'
 				/>
-				<div className={classes.right}>
+				<div className={classes.content}>
 					<Grid
 						className={classes.spacer}
 						alignItems='center'
@@ -197,8 +197,6 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 							</Typography>
 						</Grid>
 					</Grid>
-
-					<MovieCrew crew={movie.credits.crew} />
 
 					<Typography className={classes.spacer} variant='h4'>
 						Cast

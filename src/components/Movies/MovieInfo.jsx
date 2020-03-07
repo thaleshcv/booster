@@ -14,6 +14,30 @@ function MovieCrew({ crew }) {
 		<Grid spacing={2} container>
 			<Grid xs={12} md={4} item>
 				<Typography color='textSecondary' variant='overline'>
+					Released
+				</Typography>
+				<Typography color='textSecondary' variant='body2'>
+					{releaseDate}
+				</Typography>
+			</Grid>
+			<Grid xs={12} md={4} item>
+				<Typography color='textSecondary' variant='overline'>
+					From
+				</Typography>
+				<Typography color='textSecondary' variant='body2'>
+					{countries.map(c => c.name).join(", ")}
+				</Typography>
+			</Grid>
+			<Grid xs={12} md={4} item>
+				<Typography color='textSecondary' variant='overline'>
+					Runtime
+				</Typography>
+				<Typography color='textSecondary' variant='body2'>
+					{runtime} minutes
+				</Typography>
+			</Grid>
+			<Grid xs={12} md={4} item>
+				<Typography color='textSecondary' variant='overline'>
 					Directed by
 				</Typography>
 				<Typography color='textPrimary' variant='body2'>
@@ -32,4 +56,4 @@ function MovieCrew({ crew }) {
 	);
 }
 
-export default MovieCrew;
+export default MovieInfo;
