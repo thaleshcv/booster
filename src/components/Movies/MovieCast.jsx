@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
+import MovieCastItem from "./MovieCastItem";
 import { getProfileUrl } from "../../lib/tmdb";
 
 const CAST_LIMIT = 5;
@@ -49,48 +50,51 @@ function MovieCast({ cast }) {
 	return (
 		<div className={classes.root}>
 			{castList.map(cast => (
-				<div className={classes.avatarWrapper} key={cast.credit_id}>
-					<Avatar
-						className={classes.avatar}
-						alt={cast.name}
-						src={getProfileUrl(cast.profile_path)}
-					/>
-					<Typography variant='caption' color='textSecondary'>
-						{cast.name}
-					</Typography>
-					<br />
-					<Typography variant='caption' color='textPrimary'>
-						{cast.character}
-					</Typography>
-				</div>
+				<MovieCastItem
+					key={cast.credit_id}
+					alt={cast.name}
+					src={getProfileUrl(cast.profile_path)}
+					footer={
+						<>
+							<Typography variant='caption' color='textSecondary'>
+								{cast.name}
+							</Typography>
+							<br />
+							<Typography variant='caption' color='textPrimary'>
+								{cast.character}
+							</Typography>
+						</>
+					}
+				/>
 			))}
-
 			{fullCast ? (
-				<div className={classes.avatarWrapper}>
-					<Avatar className={classes.avatarIcon}>
-						<ChevronLeftIcon />
-					</Avatar>
-					<Button
-						size='small'
-						variant='text'
-						color='secondary'
-						onClick={() => setFullCast(false)}>
-						Show less
-					</Button>
-				</div>
+				<MovieCastItem
+					avatarClass={classes.avatarIcon}
+					footer={
+						<Button
+							size='small'
+							variant='text'
+							color='secondary'
+							onClick={() => setFullCast(false)}>
+							Show less
+						</Button>
+					}>
+					<ChevronLeftIcon />
+				</MovieCastItem>
 			) : (
-				<div className={classes.avatarWrapper}>
-					<Avatar className={classes.avatarIcon}>
-						+{cast.length - castList.length}
-					</Avatar>
-					<Button
-						size='small'
-						variant='text'
-						color='secondary'
-						onClick={() => setFullCast(true)}>
-						Show more
-					</Button>
-				</div>
+				<MovieCastItem
+					avatarClass={classes.avatarIcon}
+					footer={
+						<Button
+							size='small'
+							variant='text'
+							color='secondary'
+							onClick={() => setFullCast(true)}>
+							Show more
+						</Button>
+					}>
+					+{cast.length - castList.length}
+				</MovieCastItem>
 			)}
 		</div>
 	);
