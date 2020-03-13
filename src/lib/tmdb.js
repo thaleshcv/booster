@@ -51,6 +51,16 @@ export function getMovie(movieId, params = {}) {
 }
 
 /**
+ * Get collection details by id.
+ *
+ * @param {String} collectionId
+ * @param {Object} params
+ */
+export function getCollection(collectionId, params = {}) {
+	return client.get(`/collection/${collectionId}`, { params });
+}
+
+/**
  * Build the URI for a poster image.
  *
  * @param {String} path Poster image path.
