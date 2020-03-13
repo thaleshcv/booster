@@ -9,6 +9,7 @@ import WatchedIcon from "@material-ui/icons/DoneOutline";
 
 import MovieCast from "./MovieCast";
 import MovieGenres from "./MovieGenres";
+import MovieInfo from "./MovieInfo";
 
 import { getPosterUrl, getMovie } from "../../lib/tmdb";
 import {
@@ -35,7 +36,12 @@ const useStyles = makeStyles(theme => ({
 		}
 	},
 	content: {
-		padding: theme.spacing(0, 1)
+		"padding": theme.spacing(0, 1),
+		"display": "flex",
+		"flexDirection": "column",
+		"& > *": {
+			margin: theme.spacing(1, 0)
+		}
 	},
 	progress: {
 		minHeight: 400,
@@ -138,11 +144,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					/>
 				</div>
 				<div className={classes.content}>
-					<Grid
-						className={classes.spacer}
-						alignItems='center'
-						spacing={1}
-						container>
+					<Grid alignItems='center' spacing={1} container>
 						<Grid style={{ flex: 1 }} item>
 							<Typography variant='h2'>{movie.title}</Typography>
 						</Grid>
@@ -169,40 +171,16 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						{movie.overview}
 					</Typography>
 
-					<div className={classes.spacer}>
-						<MovieGenres genres={movie.genres} />
-					</div>
+					<MovieGenres genres={movie.genres} />
 
-					<Grid spacing={2} container>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								Released
-							</Typography>
-							<Typography color='textPrimary' variant='body2'>
-								{movie.release_date}
-							</Typography>
-						</Grid>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								From
-							</Typography>
-							<Typography color='textPrimary' variant='body2'>
-								{movie.production_countries.map(c => c.name).join(", ")}
-							</Typography>
-						</Grid>
-						<Grid xs={12} md={4} item>
-							<Typography color='textSecondary' variant='overline'>
-								Runtime
-							</Typography>
-							<Typography color='textPrimary' variant='body2'>
-								{movie.runtime} minutes
-							</Typography>
-						</Grid>
-					</Grid>
+					<MovieInfo
+						crew={movie.credits.crew}
+						releaseDate={movie.release_date}
+						countries={movie.production_countries}
+						runtime={movie.runtime}
+					/>
 
-					<Typography className={classes.spacer} variant='h4'>
-						Cast
-					</Typography>
+					<Typography variant='h4'>Cast</Typography>
 					<MovieCast cast={movie.credits.cast} />
 				</div>
 			</div>

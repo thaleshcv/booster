@@ -6,7 +6,7 @@ function getCrewMember(crew, job) {
 	return crew.filter(c => c.job === job).map(c => c.name);
 }
 
-function MovieCrew({ crew }) {
+function MovieInfo({ crew, releaseDate, countries, runtime }) {
 	const directors = getCrewMember(crew, "Director");
 	const producers = getCrewMember(crew, "Producer");
 
@@ -16,7 +16,7 @@ function MovieCrew({ crew }) {
 				<Typography color='textSecondary' variant='overline'>
 					Released
 				</Typography>
-				<Typography color='textSecondary' variant='body2'>
+				<Typography color='textPrimary' variant='body2'>
 					{releaseDate}
 				</Typography>
 			</Grid>
@@ -24,7 +24,7 @@ function MovieCrew({ crew }) {
 				<Typography color='textSecondary' variant='overline'>
 					From
 				</Typography>
-				<Typography color='textSecondary' variant='body2'>
+				<Typography color='textPrimary' variant='body2'>
 					{countries.map(c => c.name).join(", ")}
 				</Typography>
 			</Grid>
@@ -32,7 +32,7 @@ function MovieCrew({ crew }) {
 				<Typography color='textSecondary' variant='overline'>
 					Runtime
 				</Typography>
-				<Typography color='textSecondary' variant='body2'>
+				<Typography color='textPrimary' variant='body2'>
 					{runtime} minutes
 				</Typography>
 			</Grid>
