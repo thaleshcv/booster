@@ -8,10 +8,11 @@ import FavoriteIcon from "@material-ui/icons/FavoriteBorder";
 import WatchedIcon from "@material-ui/icons/DoneOutline";
 
 import MovieCast from "./MovieCast";
+import MovieCollection from "./MovieCollection";
 import MovieGenres from "./MovieGenres";
 import MovieInfo from "./MovieInfo";
 
-import { getPosterUrl, getMovie } from "../../lib/tmdb";
+import { getPosterUrl, getMovie, getCollection } from "../../lib/tmdb";
 import {
 	createFavorite,
 	deleteFavorite,
@@ -82,6 +83,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
+	const [collection, setCollection] = useState();
 
 	const { setLoading } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
@@ -89,12 +91,23 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 		dispatch
 	);
 
+	const fetchCollection = collectionId =>
+		getCollection(collectionId).then(collection => setCollection(collection));
+
 	useEffect(() => {
 		setLoading(true);
 
+		let fetchedMovie;
+
 		getMovie(movieId, { append_to_response: "videos,credits" })
 			.then(movie => {
+				fetchedMovie = movie;
 				setMovie(movie);
+			})
+			.then(() => {
+				if (fetchedMovie.belongs_to_collection) {
+					fetchCollection(fetchedMovie.belongs_to_collection.id);
+				}
 			})
 			.finally(() => {
 				setLoading(false);
@@ -182,6 +195,13 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 
 					<Typography variant='h4'>Cast</Typography>
 					<MovieCast cast={movie.credits.cast} />
+
+					{collection && (
+						<>
+							<Typography variant='h4'>{collection.name}</Typography>
+							<MovieCollection parts={collection.parts} />
+						</>
+					)}
 				</div>
 			</div>
 		</Fragment>
