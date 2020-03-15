@@ -8,8 +8,7 @@ import { getProfileUrl } from "../../lib/tmdb";
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: "flex",
-		flexFlow: "row wrap",
-		justifyContent: "space-between"
+		flexFlow: "row wrap"
 	},
 	avatar: {
 		marginBottom: theme.spacing(1),
@@ -53,16 +52,14 @@ function MovieCast({ cast }) {
 		return <Typography color='error'>Cast not available</Typography>;
 	}
 
-	const castList = cast.slice(0, 8);
-
 	return (
 		<div className={classes.root}>
-			{castList.map(cast => (
+			{cast.map(person => (
 				<MovieCastItem
-					key={cast.credit_id}
-					alt={cast.name}
-					src={getProfileUrl(cast.profile_path)}
-					footer={<CastInfo name={cast.name} character={cast.character} />}
+					key={person.credit_id}
+					alt={person.name}
+					src={getProfileUrl(person.profile_path)}
+					footer={<CastInfo name={person.name} character={person.character} />}
 				/>
 			))}
 		</div>

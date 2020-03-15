@@ -50,6 +50,11 @@ const useStyles = makeStyles(theme => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center"
+	},
+	castWrapper: {
+		maxHeight: "200px",
+		overflowY: "auto",
+		overflowX: "hidden"
 	}
 }));
 
@@ -110,6 +115,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 				}
 			})
 			.finally(() => {
+				window.scrollTo(0, 0);
 				setLoading(false);
 			});
 	}, [movieId, setLoading]);
@@ -194,11 +200,18 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 					/>
 
 					<Typography variant='h4'>Cast</Typography>
-					<MovieCast cast={movie.credits.cast} />
+					<div className={classes.castWrapper}>
+						<MovieCast cast={movie.credits.cast} />
+					</div>
 
 					{collection && (
 						<>
-							<Typography variant='h4'>{collection.name}</Typography>
+							<Typography variant='h4'>
+								{collection.name}{" "}
+								<Typography variant='body1' component='small'>
+									{collection.parts.length} movies
+								</Typography>
+							</Typography>
 							<MovieCollection parts={collection.parts} />
 						</>
 					)}
