@@ -1,16 +1,16 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { useHistory } from 'react-router-dom';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import React, { useEffect, useState, Fragment } from "react";
+import { useHistory } from "react-router-dom";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 
-import SearchInput from '../SearchInput';
-import MovieList from '../Movies/MovieList';
-import MovieListItem from '../Movies/MovieListItem';
-import Pagination from '../Pagination';
+import SearchInput from "../SearchInput";
+import MovieGrid from "../Movies/MovieGrid";
+import MovieGridItem from "../Movies/MovieGridItem";
+import Pagination from "../Pagination";
 
-import useApp from '../../actions/app';
-import { getMovies, searchMovies } from '../../lib/tmdb';
+import useApp from "../../actions/app";
+import { getMovies, searchMovies } from "../../lib/tmdb";
 
 function fetchMovies(query, page) {
 	return query ? searchMovies({ query, page }) : getMovies({ page });
@@ -32,7 +32,7 @@ function Discover({ dispatch }) {
 		setLoading(true);
 
 		const search = new URLSearchParams(location.search);
-		fetchMovies(search.get('query'), search.get('page'))
+		fetchMovies(search.get("query"), search.get("page"))
 			.then(movies => setMovies(movies))
 			.then(() => window.scrollTo(0, 0))
 			.then(() => setLoading(false));
@@ -40,7 +40,7 @@ function Discover({ dispatch }) {
 
 	const handlePagination = page => {
 		const search = new URLSearchParams(location.search);
-		search.set('page', page);
+		search.set("page", page);
 
 		history.push({
 			pathname: location.pathname,
@@ -50,7 +50,7 @@ function Discover({ dispatch }) {
 
 	const handleSearchChange = value => {
 		history.push({
-			pathname: '/discover',
+			pathname: "/discover",
 			search: `query=${value}`
 		});
 	};
@@ -73,16 +73,19 @@ function Discover({ dispatch }) {
 				</Typography>
 			) : (
 				<Fragment>
-					<MovieList>
-						{movies.results.map(({ id, title, poster_path }) => (
-							<MovieListItem
-								key={id}
-								movieId={id}
-								title={title}
-								posterPath={poster_path}
-							/>
-						))}
-					</MovieList>
+					<MovieGrid>
+						{movies.results.map(
+							({ id, title, backdrop_path, release_date }) => (
+								<MovieGridItem
+									key={id}
+									movieId={id}
+									releaseDate={release_date}
+									title={title}
+									backdropPath={backdrop_path}
+								/>
+							)
+						)}
+					</MovieGrid>
 					<Pagination
 						onPaginate={handlePagination}
 						currentPage={movies.page}
