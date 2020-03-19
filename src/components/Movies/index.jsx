@@ -12,7 +12,8 @@ import MovieCollection from "./MovieCollection";
 import MovieGenres from "./MovieGenres";
 import MovieInfo from "./MovieInfo";
 
-import { getPosterUrl, getMovie, getCollection } from "../../lib/tmdb";
+import { getBackdropUrl, getMovie, getCollection } from "../../lib/tmdb";
+
 import {
 	createFavorite,
 	deleteFavorite,
@@ -25,7 +26,20 @@ import useFavorites from "../../actions/favorites";
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		display: "flex"
+		display: "flex",
+		flexDirection: "column"
+	},
+	backdrop: {
+		"width": "100%",
+		"display": "flex",
+		"justifyContent": "center",
+		"alignItems": "flex-start",
+		"maxHeight": "400px",
+		"overflow": "hidden",
+		"& > img": {
+			width: "100%",
+			height: "auto"
+		}
 	},
 	spacer: {
 		margin: theme.spacing(2, 0)
@@ -39,10 +53,15 @@ const useStyles = makeStyles(theme => ({
 	content: {
 		"padding": theme.spacing(0, 1),
 		"display": "flex",
-		"flexDirection": "column",
 		"& > *": {
 			margin: theme.spacing(1, 0)
 		}
+	},
+	contentRight: {
+		flex: 1
+	},
+	contentLeft: {
+		width: "330px"
 	},
 	progress: {
 		minHeight: 400,
@@ -50,11 +69,6 @@ const useStyles = makeStyles(theme => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center"
-	},
-	castWrapper: {
-		maxHeight: "200px",
-		overflowY: "auto",
-		overflowX: "hidden"
 	}
 }));
 
@@ -81,6 +95,51 @@ function ActionBtn({ Icon, active, ...props }) {
 		<IconButton {...props} className={classNames.join(" ")}>
 			<Icon />
 		</IconButton>
+	);
+}
+
+const useCastStyles = makeStyles(theme => ({
+	spacer: {
+		margin: theme.spacing(2, 0)
+	},
+	castWrapper: {
+		maxHeight: "200px",
+		overflowY: "auto",
+		overflowX: "hidden"
+	}
+}));
+
+function CastSection({ cast }) {
+	const classes = useCastStyles();
+
+	if (!cast || !cast.length) return null;
+
+	return (
+		<div className={classes.spacer}>
+			<Typography variant='h4'>Cast</Typography>
+			<div className={classes.castWrapper}>
+				<MovieCast cast={cast} />
+			</div>
+		</div>
+	);
+}
+
+const useCollectionStyles = makeStyles(theme => ({
+	spacer: {
+		margin: theme.spacing(2, 0)
+	}
+}));
+
+function CollectionSection({ collection }) {
+	const classes = useCollectionStyles();
+
+	if (!collection) return null;
+
+	return (
+		<div className={classes.spacer}>
+			<Typography variant='h4'>{collection.name}</Typography>
+			<MovieCollection parts={collection.parts} />
+		</div>
 	);
 }
 
@@ -155,66 +214,56 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	return (
 		<Fragment>
 			<div className={classes.root}>
-				<div className={classes.poster}>
+				<div className={classes.backdrop}>
 					<img
-						src={getPosterUrl(movie.poster_path, 342)}
+						src={getBackdropUrl(movie.backdrop_path, 1280)}
 						title='Poster'
 						alt='Poster'
 					/>
 				</div>
-				<div className={classes.content}>
-					<Grid alignItems='center' spacing={1} container>
-						<Grid style={{ flex: 1 }} item>
-							<Typography variant='h2'>{movie.title}</Typography>
-						</Grid>
-						<Grid item>
-							<ActionBtn
-								title={`${favoriteId ? "Remove from" : "Add to"} favorites`}
-								Icon={FavoriteIcon}
-								active={Boolean(favoriteId)}
-								onClick={handleFavorite}
-							/>
-							<ActionBtn
-								title={`Movie${watched ? " " : " not "}watched`}
-								Icon={WatchedIcon}
-								disabled={!favoriteId}
-								active={watched}
-								onClick={handleWatch}
-							/>
-						</Grid>
+
+				<Grid alignItems='center' spacing={1} container>
+					<Grid style={{ flex: 1 }} item>
+						<Typography variant='h2'>{movie.title}</Typography>
 					</Grid>
-					<Typography variant='body1' color='textSecondary' paragraph>
-						{movie.tagline}
-					</Typography>
-					<Typography variant='body1' paragraph>
-						{movie.overview}
-					</Typography>
+					<Grid item>
+						<ActionBtn
+							title={`${favoriteId ? "Remove from" : "Add to"} favorites`}
+							Icon={FavoriteIcon}
+							active={Boolean(favoriteId)}
+							onClick={handleFavorite}
+						/>
+						<ActionBtn
+							title={`Movie${watched ? " " : " not "}watched`}
+							Icon={WatchedIcon}
+							disabled={!favoriteId}
+							active={watched}
+							onClick={handleWatch}
+						/>
+					</Grid>
+				</Grid>
 
-					<MovieGenres genres={movie.genres} />
-
-					<MovieInfo
-						crew={movie.credits.crew}
-						releaseDate={movie.release_date}
-						countries={movie.production_countries}
-						runtime={movie.runtime}
-					/>
-
-					<Typography variant='h4'>Cast</Typography>
-					<div className={classes.castWrapper}>
-						<MovieCast cast={movie.credits.cast} />
+				<div className={classes.content}>
+					<div className={classes.contentLeft}>
+						<MovieGenres genres={movie.genres} />
+						<MovieInfo
+							crew={movie.credits.crew}
+							releaseDate={movie.release_date}
+							countries={movie.production_countries}
+							runtime={movie.runtime}
+						/>
 					</div>
+					<div className={classes.contentRight}>
+						<Typography variant='body1' color='textSecondary' paragraph>
+							{movie.tagline}
+						</Typography>
+						<Typography variant='body1' paragraph>
+							{movie.overview}
+						</Typography>
 
-					{collection && (
-						<>
-							<Typography variant='h4'>
-								{collection.name}{" "}
-								<Typography variant='body1' component='small'>
-									{collection.parts.length} movies
-								</Typography>
-							</Typography>
-							<MovieCollection parts={collection.parts} />
-						</>
-					)}
+						<CastSection cast={movie.credits.cast} />
+						<CollectionSection collection={collection} />
+					</div>
 				</div>
 			</div>
 		</Fragment>

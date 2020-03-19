@@ -61,6 +61,16 @@ export function getCollection(collectionId, params = {}) {
 }
 
 /**
+ * Build the URI for a backdrop image.
+ *
+ * @param {String} path Backdrop image path.
+ * @param {Number} size Backdrop size (one of 300, 780, 1280).
+ */
+export function getBackdropUrl(path, size) {
+	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 780}/${path}`;
+}
+
+/**
  * Build the URI for a poster image.
  *
  * @param {String} path Poster image path.

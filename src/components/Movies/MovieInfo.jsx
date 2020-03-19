@@ -12,23 +12,7 @@ function MovieInfo({ crew, releaseDate, countries, runtime }) {
 
 	return (
 		<Grid spacing={2} container>
-			<Grid xs={12} md={4} item>
-				<Typography color='textSecondary' variant='overline'>
-					Released
-				</Typography>
-				<Typography color='textPrimary' variant='body2'>
-					{releaseDate}
-				</Typography>
-			</Grid>
-			<Grid xs={12} md={4} item>
-				<Typography color='textSecondary' variant='overline'>
-					From
-				</Typography>
-				<Typography color='textPrimary' variant='body2'>
-					{countries.map(c => c.name).join(", ")}
-				</Typography>
-			</Grid>
-			<Grid xs={12} md={4} item>
+			<Grid xs={12} item>
 				<Typography color='textSecondary' variant='overline'>
 					Runtime
 				</Typography>
@@ -36,7 +20,23 @@ function MovieInfo({ crew, releaseDate, countries, runtime }) {
 					{runtime} minutes
 				</Typography>
 			</Grid>
-			<Grid xs={12} md={4} item>
+			<Grid xs={12} item>
+				<Typography color='textSecondary' variant='overline'>
+					Released
+				</Typography>
+				<Typography color='textPrimary' variant='body2'>
+					{releaseDate}
+				</Typography>
+			</Grid>
+			<Grid xs={12} item>
+				<Typography color='textSecondary' variant='overline'>
+					From
+				</Typography>
+				<Typography color='textPrimary' variant='body2'>
+					{countries.map(c => c.name).join(", ")}
+				</Typography>
+			</Grid>
+			<Grid xs={12} item>
 				<Typography color='textSecondary' variant='overline'>
 					Directed by
 				</Typography>
@@ -44,7 +44,7 @@ function MovieInfo({ crew, releaseDate, countries, runtime }) {
 					{directors.join(", ")}
 				</Typography>
 			</Grid>
-			<Grid xs={12} md={8} item>
+			<Grid xs={12} item>
 				<Typography color='textSecondary' variant='overline'>
 					Produced by
 				</Typography>
