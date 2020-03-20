@@ -89,3 +89,17 @@ export function getPosterUrl(path, size) {
 export function getProfileUrl(path, size) {
 	return `${process.env.REACT_APP_MOVIEDB_IMAGES_PATH}/w${size || 45}/${path}`;
 }
+
+/**
+ *
+ */
+export function getVideoUrl({ site, key }) {
+	switch (site) {
+		case "YouTube":
+			return `https://www.youtube.com/watch?v=${key}`;
+		case "Vimeo":
+			return `https://vimeo.com/${key}`;
+		default:
+			break;
+	}
+}

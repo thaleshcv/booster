@@ -1,9 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { blue, grey } from "@material-ui/core/colors";
+import MovieIcon from "@material-ui/icons/Movie";
 import FavoriteIcon from "@material-ui/icons/FavoriteBorder";
 import WatchedIcon from "@material-ui/icons/DoneOutline";
 
@@ -12,7 +15,12 @@ import MovieCollection from "./MovieCollection";
 import MovieGenres from "./MovieGenres";
 import MovieInfo from "./MovieInfo";
 
-import { getBackdropUrl, getMovie, getCollection } from "../../lib/tmdb";
+import {
+	getBackdropUrl,
+	getMovie,
+	getCollection,
+	getVideoUrl
+} from "../../lib/tmdb";
 
 import {
 	createFavorite,
@@ -143,11 +151,20 @@ function CollectionSection({ collection }) {
 	);
 }
 
+function filterMovieVideos(videos) {
+	return videos.filter(
+		vid =>
+			vid.type.toLowerCase() === "trailer" ||
+			vid.type.toLowerCase() === "teaser"
+	);
+}
+
 function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 	const classes = useStyles();
 
 	const [movie, setMovie] = useState();
-	const [collection, setCollection] = useState();
+	const [videos, setVideos] = useState([]);
+	const [collection, setCollection] = useState([]);
 
 	const { setLoading } = useApp(dispatch);
 	const { addFlashMessage } = useFlash(dispatch);
@@ -167,6 +184,9 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 			.then(movie => {
 				fetchedMovie = movie;
 				setMovie(movie);
+			})
+			.then(() => {
+				setVideos(filterMovieVideos(fetchedMovie.videos.results));
 			})
 			.then(() => {
 				if (fetchedMovie.belongs_to_collection) {
@@ -260,6 +280,17 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						<Typography variant='body1' paragraph>
 							{movie.overview}
 						</Typography>
+
+						{videos.map((vid, idx) => (
+							<Button
+								key={vid.id}
+								component={Link}
+								href={getVideoUrl(vid)}
+								target='_blank'
+								startIcon={<MovieIcon />}>
+								Video #{idx + 1} ({vid.type})
+							</Button>
+						))}
 
 						<CastSection cast={movie.credits.cast} />
 						<CollectionSection collection={collection} />
