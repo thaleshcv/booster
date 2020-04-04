@@ -19,23 +19,23 @@ import {
 	getBackdropUrl,
 	getMovie,
 	getCollection,
-	getVideoUrl
+	getVideoUrl,
 } from "../../lib/tmdb";
 
 import {
 	createFavorite,
 	deleteFavorite,
-	setFavoriteWatched
+	setFavoriteWatched,
 } from "../../lib/favorites";
 
 import useApp from "../../actions/app";
 import useFlash from "../../actions/flash";
 import useFavorites from "../../actions/favorites";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
-		flexDirection: "column"
+		flexDirection: "column",
 	},
 	backdrop: {
 		"width": "100%",
@@ -44,51 +44,60 @@ const useStyles = makeStyles(theme => ({
 		"alignItems": "flex-start",
 		"maxHeight": "400px",
 		"overflow": "hidden",
+		"position": "relative",
 		"& > img": {
 			width: "100%",
-			height: "auto"
-		}
+			height: "auto",
+		},
+	},
+	title: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		bottom: 0,
+		background: "rgba(30,30,30,.6)",
+		color: theme.palette.common.white,
 	},
 	spacer: {
-		margin: theme.spacing(2, 0)
+		margin: theme.spacing(2, 0),
 	},
 	poster: {
 		"minWidth": 342,
 		"& > img": {
-			width: "100%"
-		}
+			width: "100%",
+		},
 	},
 	content: {
 		"padding": theme.spacing(0, 1),
 		"display": "flex",
 		"& > *": {
-			margin: theme.spacing(1, 0)
-		}
+			margin: theme.spacing(1, 0),
+		},
 	},
 	contentRight: {
-		flex: 1
+		flex: 1,
 	},
 	contentLeft: {
-		width: "330px"
+		width: "330px",
 	},
 	progress: {
 		minHeight: 400,
 		height: "100%",
 		display: "flex",
 		justifyContent: "center",
-		alignItems: "center"
-	}
+		alignItems: "center",
+	},
 }));
 
-const useActionStyles = makeStyles(theme => ({
+const useActionStyles = makeStyles((theme) => ({
 	actionBtn: {
 		"margin": theme.spacing(0, 1),
 		"backgroundColor": grey["200"],
 		"&.active": {
 			color: theme.palette.common.white,
-			backgroundColor: blue["700"]
-		}
-	}
+			backgroundColor: blue["700"],
+		},
+	},
 }));
 
 function ActionBtn({ Icon, active, ...props }) {
@@ -106,15 +115,15 @@ function ActionBtn({ Icon, active, ...props }) {
 	);
 }
 
-const useCastStyles = makeStyles(theme => ({
+const useCastStyles = makeStyles((theme) => ({
 	spacer: {
-		margin: theme.spacing(2, 0)
+		margin: theme.spacing(2, 0),
 	},
 	castWrapper: {
 		maxHeight: "200px",
 		overflowY: "auto",
-		overflowX: "hidden"
-	}
+		overflowX: "hidden",
+	},
 }));
 
 function CastSection({ cast }) {
@@ -132,10 +141,10 @@ function CastSection({ cast }) {
 	);
 }
 
-const useCollectionStyles = makeStyles(theme => ({
+const useCollectionStyles = makeStyles((theme) => ({
 	spacer: {
-		margin: theme.spacing(2, 0)
-	}
+		margin: theme.spacing(2, 0),
+	},
 }));
 
 function CollectionSection({ collection }) {
@@ -153,7 +162,7 @@ function CollectionSection({ collection }) {
 
 function filterMovieVideos(videos) {
 	return videos.filter(
-		vid =>
+		(vid) =>
 			vid.type.toLowerCase() === "trailer" ||
 			vid.type.toLowerCase() === "teaser"
 	);
@@ -172,8 +181,8 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 		dispatch
 	);
 
-	const fetchCollection = collectionId =>
-		getCollection(collectionId).then(collection => setCollection(collection));
+	const fetchCollection = (collectionId) =>
+		getCollection(collectionId).then((collection) => setCollection(collection));
 
 	useEffect(() => {
 		setLoading(true);
@@ -181,7 +190,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 		let fetchedMovie;
 
 		getMovie(movieId, { append_to_response: "videos,credits" })
-			.then(movie => {
+			.then((movie) => {
 				fetchedMovie = movie;
 				setMovie(movie);
 			})
@@ -205,7 +214,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 		setFavoriteWatched(favoriteId, newWatchedValue).then(() =>
 			updateFavorite({
 				id: favoriteId,
-				watched: newWatchedValue
+				watched: newWatchedValue,
 			})
 		);
 	};
@@ -222,7 +231,7 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 				.then(() => addFlashMessage("Movie removed from favorites"));
 		} else {
 			createFavorite(movie)
-				.then(favorite => addFavorites(favorite))
+				.then((favorite) => addFavorites(favorite))
 				.then(() => addFlashMessage("Movie added to favorites"));
 		}
 	};
@@ -240,32 +249,34 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						title='Poster'
 						alt='Poster'
 					/>
+					<Grid
+						className={classes.title}
+						alignItems='center'
+						spacing={1}
+						container>
+						<Grid style={{ flex: 1 }} item>
+							<Typography variant='h2'>{movie.title}</Typography>
+						</Grid>
+						<Grid item>
+							<ActionBtn
+								title={`${favoriteId ? "Remove from" : "Add to"} favorites`}
+								Icon={FavoriteIcon}
+								active={Boolean(favoriteId)}
+								onClick={handleFavorite}
+							/>
+							<ActionBtn
+								title={`Movie${watched ? " " : " not "}watched`}
+								Icon={WatchedIcon}
+								disabled={!favoriteId}
+								active={watched}
+								onClick={handleWatch}
+							/>
+						</Grid>
+					</Grid>
 				</div>
-
-				<Grid alignItems='center' spacing={1} container>
-					<Grid style={{ flex: 1 }} item>
-						<Typography variant='h2'>{movie.title}</Typography>
-					</Grid>
-					<Grid item>
-						<ActionBtn
-							title={`${favoriteId ? "Remove from" : "Add to"} favorites`}
-							Icon={FavoriteIcon}
-							active={Boolean(favoriteId)}
-							onClick={handleFavorite}
-						/>
-						<ActionBtn
-							title={`Movie${watched ? " " : " not "}watched`}
-							Icon={WatchedIcon}
-							disabled={!favoriteId}
-							active={watched}
-							onClick={handleWatch}
-						/>
-					</Grid>
-				</Grid>
 
 				<div className={classes.content}>
 					<div className={classes.contentLeft}>
-						<MovieGenres genres={movie.genres} />
 						<MovieInfo
 							crew={movie.credits.crew}
 							releaseDate={movie.release_date}
@@ -280,17 +291,20 @@ function Movies({ authenticated, dispatch, movieId, favoriteId, watched }) {
 						<Typography variant='body1' paragraph>
 							{movie.overview}
 						</Typography>
+						<MovieGenres genres={movie.genres} />
 
-						{videos.map((vid, idx) => (
-							<Button
-								key={vid.id}
-								component={Link}
-								href={getVideoUrl(vid)}
-								target='_blank'
-								startIcon={<MovieIcon />}>
-								Video #{idx + 1} ({vid.type})
-							</Button>
-						))}
+						<div className={classes.spacer}>
+							{videos.map((vid, idx) => (
+								<Button
+									key={vid.id}
+									component={Link}
+									href={getVideoUrl(vid)}
+									target='_blank'
+									startIcon={<MovieIcon />}>
+									Video #{idx + 1} ({vid.type})
+								</Button>
+							))}
+						</div>
 
 						<CastSection cast={movie.credits.cast} />
 						<CollectionSection collection={collection} />
